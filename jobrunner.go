@@ -22,7 +22,7 @@ func init() {
 
 	toRun = make(chan int, 100)
 
-	for i := 0; i < 3; i++ {
+	for i := 0; i < cores; i++ {
 		go worker(i, toRun)
 	}
 }
