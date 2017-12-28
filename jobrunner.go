@@ -49,9 +49,15 @@ func worker(w int, jobChan <-chan int) {
 			log.Printf(err.Error())
 			return
 		}
+
+		// This is where we would process our job
 		time.Sleep(time.Second * 20)
+
+		// And when finished, note the time, check for errors, etc
 		job.Ended = time.Now()
 		job.Running = false
+		job.Completed = true
+
 		err = RepoUpdateJob(job)
 		if err != nil {
 			log.Printf("error on job %d", id)

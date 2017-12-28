@@ -58,6 +58,7 @@ func RepoUpdateJob(job Job) error {
 			jobs[i].Running = job.Running
 			jobs[i].Started = job.Started
 			jobs[i].Ended = job.Ended
+			jobs[i].Completed = job.Completed
 			jobs[i].LastUpdate = time.Now()
 			return nil
 		}
