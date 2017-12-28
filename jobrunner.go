@@ -52,7 +52,7 @@ func worker(w int, jobChan <-chan int) {
 		time.Sleep(time.Second * 20)
 		job.Ended = time.Now()
 		job.Running = false
-		RepoUpdateJob(job)
+		err = RepoUpdateJob(job)
 		if err != nil {
 			log.Printf("error on job %d", id)
 			log.Printf(err.Error())
