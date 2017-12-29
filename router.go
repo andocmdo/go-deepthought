@@ -18,7 +18,7 @@ func NewRouter() *mux.Router {
 				Methods(route.Method).
 				Path(route.Pattern).
 				Name(route.Name).
-				Headers(route.Header, route.ContentType).
+				HeadersRegexp(route.Header, route.ContentType).
 				Handler(handler)
 		} else {
 			router.
