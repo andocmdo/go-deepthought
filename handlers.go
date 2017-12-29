@@ -16,6 +16,7 @@ import (
 // max size of upload
 const uploadLimit = 1048576
 
+/*
 // Index returns a Status OK header and plain text string to
 // verify server is working
 func Index(w http.ResponseWriter, r *http.Request) {
@@ -23,11 +24,17 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintln(w, "It's working...")
 }
+*/
 
 // FrontEnd returns files in the working directory
-func FrontEnd(w http.ResponseWriter, r *http.Request) {
+func Index(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	data, err := ioutil.ReadFile(vars["file"])
+	file := vars["file"]
+	log.Printf(file)
+	if file == "" {
+		file = "index.html"
+	}
+	data, err := ioutil.ReadFile(file)
 	if err != nil {
 		w.Header().Set("Content-Type", "text/plain")
 		w.WriteHeader(http.StatusNotFound)

@@ -15,14 +15,6 @@ type Routes []Route
 
 var routes = Routes{
 	Route{
-		"FrontEnd",
-		"GET",
-		"/frontend/{file}",
-		"",
-		"",
-		FrontEnd,
-	},
-	Route{
 		"Index",
 		"GET",
 		"/",
@@ -31,9 +23,17 @@ var routes = Routes{
 		Index,
 	},
 	Route{
+		"IndexFile",
+		"GET",
+		"/{file}",
+		"",
+		"",
+		Index,
+	},
+	Route{
 		"JobIndex",
 		"GET",
-		"/jobs",
+		"/api/jobs",
 		"",
 		"",
 		JobIndex,
@@ -41,7 +41,7 @@ var routes = Routes{
 	Route{
 		"JobShow",
 		"GET",
-		"/jobs/{jobID}",
+		"/api/jobs/{jobID}",
 		"",
 		"",
 		JobShow,
@@ -49,7 +49,7 @@ var routes = Routes{
 	Route{
 		"JobCreateURLEnc",
 		"POST",
-		"/jobs",
+		"/api/jobs",
 		"Content-Type",
 		//"application/x-www-form-urlencoded",
 		"application/x-www-form-urlencoded.*",
@@ -58,7 +58,7 @@ var routes = Routes{
 	Route{
 		"JobCreateJSON",
 		"POST",
-		"/jobs",
+		"/api/jobs",
 		"",
 		"",
 		JobCreateJSON,
@@ -66,7 +66,7 @@ var routes = Routes{
 	Route{
 		"JobDestroy",
 		"DELETE",
-		"/jobs/{jobID}",
+		"/api/jobs/{jobID}",
 		"",
 		"",
 		JobDestroy,
