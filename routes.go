@@ -33,7 +33,7 @@ var routes = Routes{
 	Route{
 		"JobIndex",
 		"GET",
-		"/api/jobs",
+		"/api/v1/jobs",
 		"",
 		"",
 		JobIndex,
@@ -41,7 +41,7 @@ var routes = Routes{
 	Route{
 		"JobShow",
 		"GET",
-		"/api/jobs/{jobID}",
+		"/api/v1/jobs/{jobID}",
 		"",
 		"",
 		JobShow,
@@ -49,7 +49,7 @@ var routes = Routes{
 	Route{
 		"JobCreateURLEnc",
 		"POST",
-		"/api/jobs",
+		"/api/v1/jobs",
 		"Content-Type",
 		//"application/x-www-form-urlencoded",
 		"application/x-www-form-urlencoded.*",
@@ -58,7 +58,7 @@ var routes = Routes{
 	Route{
 		"JobCreateJSON",
 		"POST",
-		"/api/jobs",
+		"/api/v1/jobs",
 		"",
 		"",
 		JobCreateJSON,
@@ -66,7 +66,7 @@ var routes = Routes{
 	Route{
 		"JobDestroy",
 		"DELETE",
-		"/api/jobs/{jobID}",
+		"/api/v1/jobs/{jobID}",
 		"",
 		"",
 		JobDestroy,
