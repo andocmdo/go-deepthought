@@ -39,20 +39,20 @@ var routes = Routes{
 		JobShow,
 	},
 	Route{
-		"JobCreateJSON",
-		"POST",
-		"/jobs",
-		"Content-Type",
-		"application/json",
-		JobCreateJSON,
-	},
-	Route{
 		"JobCreateURLEnc",
 		"POST",
 		"/jobs",
 		"Content-Type",
 		"application/x-www-form-urlencoded",
 		JobCreateURLEnc,
+	},
+	Route{
+		"JobCreateJSON",
+		"POST",
+		"/jobs",
+		"",
+		"",
+		JobCreateJSON,
 	},
 	Route{
 		"JobDestroy",
