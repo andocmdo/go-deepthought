@@ -24,6 +24,21 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "It's working...")
 }
 
+// FrontEnd returns files in the working directory
+func FrontEnd(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	data, err := ioutil.ReadFile(vars["file"])
+	if err != nil {
+		w.Header().Set("Content-Type", "text/plain")
+		w.WriteHeader(http.StatusNotFound)
+		log.Printf(err.Error())
+		fmt.Fprintln(w, err.Error())
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprint(w, string(data))
+}
+
 // JobIndex gets all jobs as JSON
 func JobIndex(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")

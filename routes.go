@@ -15,6 +15,14 @@ type Routes []Route
 
 var routes = Routes{
 	Route{
+		"FrontEnd",
+		"GET",
+		"/frontend/{file}",
+		"",
+		"",
+		FrontEnd,
+	},
+	Route{
 		"Index",
 		"GET",
 		"/",
@@ -39,20 +47,20 @@ var routes = Routes{
 		JobShow,
 	},
 	Route{
-		"JobCreateURLEnc",
-		"POST",
-		"/jobs",
-		"Content-Type",
-		"application/x-www-form-urlencoded",
-		JobCreateURLEnc,
-	},
-	Route{
 		"JobCreateJSON",
 		"POST",
 		"/jobs",
 		"",
 		"",
 		JobCreateJSON,
+	},
+	Route{
+		"JobCreateURLEnc",
+		"POST",
+		"/jobs",
+		"Content-Type",
+		"application/x-www-form-urlencoded",
+		JobCreateURLEnc,
 	},
 	Route{
 		"JobDestroy",
