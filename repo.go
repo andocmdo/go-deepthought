@@ -15,7 +15,7 @@ func init() {
 	mutex = &sync.Mutex{}
 	mutex.Lock()
 	defer mutex.Unlock()
-	currentID = 1
+	currentID = 0
 	// TODO REMOVE THESE FAKE JOBS!!!
 	//RepoCreateJob(Job{Running: false, Start: time.Now(), Symbol: "TECD"})
 	//RepoCreateJob(Job{Running: false, Symbol: "AAPL"})
