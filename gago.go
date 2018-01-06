@@ -57,7 +57,7 @@ func run(phrase string) {
 	var ga = gago.Generational(MakeStrings)
 	ga.Initialize()
 
-	for i := 1; i < 30; i++ {
+	for i := 1; i < 300; i++ {
 		ga.Evolve()
 		// Concatenate the elements from the best individual and display the result
 		var buffer bytes.Buffer

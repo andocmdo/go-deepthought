@@ -33,6 +33,7 @@ func queueJob(id int) {
 
 func worker(w int, jobChan <-chan int) {
 	log.Printf("started worker %d", w)
+
 	for id := range jobChan {
 		log.Printf("worker %d started job %d", w, id)
 		job, err := RepoFindJob(id)
