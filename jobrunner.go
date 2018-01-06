@@ -66,6 +66,7 @@ func worker(w int, jobChan <-chan int) {
 		job.Ended = time.Now()
 		job.Running = false
 		job.Completed = true
+		job.Result = string(out)
 
 		err = RepoUpdateJob(job)
 		if err != nil {
