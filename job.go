@@ -13,6 +13,7 @@ type Job struct {
 	Ended      time.Time `json:"ended"`      // updateable
 	LastUpdate time.Time `json:"lastUpdate"` // updateable
 	Symbol     string    `json:"symbol"`
+	Result     string    `json:"result"` //updateable
 	StartDate  string    `json:"startDate"`
 	EndDate    string    `json:"endDate"`
 	PopSize    int       `json:"popSize"`
