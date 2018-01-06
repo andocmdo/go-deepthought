@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os/exec"
 	"runtime"
 	"strconv"
 	"time"
@@ -52,7 +53,14 @@ func worker(w int, jobChan <-chan int) {
 		}
 
 		// This is where we would process our job
-		time.Sleep(time.Second * 20)
+		time.Sleep(time.Second * 10)
+		out, err := exec.Command("gagoTest").Output()
+		if err != nil {
+			log.Printf("error on job %d", id)
+			log.Printf(err.Error())
+			return
+		}
+		log.Printf("Job %d result: %s", id, string(out))
 
 		// And when finished, note the time, check for errors, etc
 		job.Ended = time.Now()
