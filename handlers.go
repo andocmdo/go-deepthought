@@ -179,27 +179,3 @@ func JobCreateURLEnc(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, err.Error())
 	}
 }
-
-// JobDestroy searches for job with id and destroys the job
-func JobDestroy(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	jobID, err := strconv.Atoi(vars["jobID"])
-	if err != nil {
-		w.Header().Set("Content-Type", "text/plain")
-		w.WriteHeader(http.StatusBadRequest)
-		log.Printf(err.Error())
-		fmt.Fprintln(w, err.Error())
-		return
-	}
-	err = RepoDestroyJob(jobID)
-	if err != nil {
-		w.Header().Set("Content-Type", "text/plain")
-		w.WriteHeader(http.StatusNotFound)
-		log.Printf(err.Error())
-		fmt.Fprintln(w, err.Error())
-		return
-	}
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintln(w, "Job destroyed")
-}

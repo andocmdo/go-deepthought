@@ -63,12 +63,4 @@ var routes = Routes{
 		"",
 		JobCreateJSON,
 	},
-	Route{
-		"JobDestroy",
-		"DELETE",
-		"/api/v1/jobs/{jobID}",
-		"",
-		"",
-		JobDestroy,
-	},
 }

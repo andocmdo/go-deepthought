@@ -26,10 +26,8 @@ func init() {
 func RepoFindJob(id int) (Job, error) {
 	mutex.Lock()
 	defer mutex.Unlock()
-	for _, j := range jobs {
-		if j.ID == id {
-			return j, nil
-		}
+	if id <= currentID || len(jobs) != 0 { // currentID? or len(jobs), this is jank
+		return jobs[id], nil
 	}
 	return Job{}, fmt.Errorf("can find job: %d", id)
 }
@@ -48,8 +46,8 @@ func RepoCreateJob(j Job) Job {
 // RepoUpdateJob updates a job that matches input job.ID, only updating updateable fields
 func RepoUpdateJob(job Job) error {
 	// check sanity first
-	if job.ID == 0 || job.Valid == false {
-		return fmt.Errorf("job is not valid or has ID of zero")
+	if job.ID < 0 || job.Valid == false {
+		return fmt.Errorf("job is not valid or has illegal ID")
 	}
 	mutex.Lock()
 	defer mutex.Unlock()
@@ -64,19 +62,4 @@ func RepoUpdateJob(job Job) error {
 		}
 	}
 	return fmt.Errorf("job ID not found")
-}
-
-// RepoDestroyJob searches for job with id to delete. If found, it is removed
-// if not found it returns an error
-// DON"T ACTUALLY USE!
-func RepoDestroyJob(id int) error {
-	mutex.Lock()
-	defer mutex.Unlock()
-	for i, j := range jobs {
-		if j.ID == id {
-			jobs = append(jobs[:i], jobs[i+1:]...)
-			return nil
-		}
-	}
-	return fmt.Errorf("Could not find job with ID of %d to delete", id)
 }
