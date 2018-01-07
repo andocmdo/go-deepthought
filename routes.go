@@ -47,6 +47,14 @@ var routes = Routes{
 		JobShow,
 	},
 	Route{
+		"JobShow",
+		"POST",
+		"/api/v1/jobs/{jobID}",
+		"",
+		"",
+		JobUpdateJSON,
+	},
+	Route{
 		"JobCreateURLEnc",
 		"POST",
 		"/api/v1/jobs",
@@ -78,6 +86,14 @@ var routes = Routes{
 		"",
 		"",
 		WorkerShow,
+	},
+	Route{
+		"WorkerShow",
+		"POST",
+		"/api/v1/workers/{workerID}",
+		"",
+		"",
+		WorkerUpdateJSON,
 	},
 	Route{
 		"WorkerCreateURLEnc",

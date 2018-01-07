@@ -154,6 +154,19 @@ func JobUpdateJSON(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// No matter what ID is sent in the JSON, we are going to only update what url
+	// was requested
+	vars := mux.Vars(r)
+	jobID, err := strconv.Atoi(vars["jobID"])
+	if err != nil {
+		w.Header().Set("Content-Type", "text/plain")
+		w.WriteHeader(http.StatusBadRequest)
+		log.Printf(err.Error())
+		fmt.Fprintln(w, err.Error())
+		return
+	}
+	job.ID = jobID
+
 	// TODO Meat and Potatoes here, until I refactor this mess....
 	j, _ := RepoUpdateJob(job) // check this error
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
