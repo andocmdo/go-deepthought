@@ -143,7 +143,7 @@ func WorkerUpdateJSON(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//TODO meat and potatoes here until I refactor
-	wrkr := RepoUpdateWorker(worker)
+	wrkr, _ := RepoUpdateWorker(worker) // check this error
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)
 	if err := json.NewEncoder(w).Encode(wrkr); err != nil {

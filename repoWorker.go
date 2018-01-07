@@ -44,7 +44,7 @@ func RepoCreateWorker(w Worker) Worker {
 }
 
 // RepoUpdateWorker updates a worker that matches input worker.ID, only updating updateable fields
-func RepoUpdateWorker(worker Worker) error {
+func RepoUpdateWorker(worker Worker) (Worker, error) {
 	// check sanity first
 	if validWorkerID(worker.ID) {
 		workerMutex.Lock()
@@ -56,9 +56,10 @@ func RepoUpdateWorker(worker Worker) error {
 		//workers[i].IPAddr = worker.IPAddr
 		//workers[i].Port = worker.Port
 		workers[worker.ID].LastUpdate = time.Now()
-		return nil
+		return workers[worker.ID], nil
 	}
-	return fmt.Errorf("worker ID not found")
+	worker.Valid = false
+	return worker, fmt.Errorf("worker ID not found")
 }
 
 func validWorkerID(id int) bool {
