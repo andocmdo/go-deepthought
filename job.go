@@ -19,9 +19,15 @@ type Job struct {
 // Jobs is a slice of Job
 type Jobs []Job
 
+var jobsToRun chan int
+
 // NewJob is a constructor for Job structs (init Args map)
 func NewJob() *Job {
 	var j Job
 	j.Args = make(map[string]string)
 	return &j
+}
+
+func queueJob(id int) {
+	jobsToRun <- id
 }

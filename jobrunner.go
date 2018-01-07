@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os/exec"
@@ -8,8 +9,6 @@ import (
 	"strconv"
 	"time"
 )
-
-var toRun chan int
 
 func init() {
 	// number of processor cores to keep free, the rest will be used to run jobs
@@ -22,15 +21,11 @@ func init() {
 	}
 	log.Println("Number of processor cores to use: ", cores)
 
-	toRun = make(chan int, 100)
+	jobsToRun = make(chan int, 1000)
 
 	for i := 0; i < cores; i++ {
-		go worker(i, toRun)
+		go worker(i, jobsToRun)
 	}
-}
-
-func queueJob(id int) {
-	toRun <- id
 }
 
 func worker(w int, jobChan <-chan int) {
@@ -54,12 +49,17 @@ func worker(w int, jobChan <-chan int) {
 		// This is where we would process our job
 		cmd := exec.Command(job.Args["command"])
 		stdout, _ := cmd.StdoutPipe()
+		stderr, _ := cmd.StderrPipe()
 		err = cmd.Start()
 		if err != nil {
 			log.Printf("error on job %d", id)
 			log.Printf(err.Error())
 		}
 		log.Printf("Job %d started", id)
+
+		slurp, _ := ioutil.ReadAll(stderr)
+		fmt.Printf("%s\n", slurp)
+
 		err = cmd.Wait()
 		log.Printf("Command finished with error: %v", err)
 

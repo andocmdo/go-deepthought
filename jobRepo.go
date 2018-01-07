@@ -6,27 +6,23 @@ import (
 	"time"
 )
 
-var currentID int
+var currentJobID int
 var jobs Jobs
-var mutex *sync.Mutex
+var jobMutex *sync.Mutex
 
 // Give us some seed data
 func init() {
-	mutex = &sync.Mutex{}
-	mutex.Lock()
-	defer mutex.Unlock()
-	currentID = 0
-	// TODO REMOVE THESE FAKE JOBS!!!
-	//RepoCreateJob(Job{Running: false, Start: time.Now(), Symbol: "TECD"})
-	//RepoCreateJob(Job{Running: false, Symbol: "AAPL"})
-
+	jobMutex = &sync.Mutex{}
+	jobMutex.Lock()
+	defer jobMutex.Unlock()
+	currentJobID = 0
 }
 
 // RepoFindJob searches for a job with id inside mock DB
 func RepoFindJob(id int) (Job, error) {
-	mutex.Lock()
-	defer mutex.Unlock()
-	if id <= currentID || len(jobs) != 0 { // currentID? or len(jobs), this is jank
+	jobMutex.Lock()
+	defer jobMutex.Unlock()
+	if id <= currentJobID || len(jobs) != 0 { // currentJobID? or len(jobs), this is jank
 		return jobs[id], nil
 	}
 	return Job{}, fmt.Errorf("can find job: %d", id)
@@ -34,12 +30,12 @@ func RepoFindJob(id int) (Job, error) {
 
 // RepoCreateJob takes a job and assigns it the next ID, then adds to jobs slice
 func RepoCreateJob(j Job) Job {
-	j.ID = currentID
-	mutex.Lock()
-	defer mutex.Unlock()
+	j.ID = currentJobID
+	jobMutex.Lock()
+	defer jobMutex.Unlock()
 	jobs = append(jobs, j)
 	queueJob(j.ID)
-	currentID++
+	currentJobID++
 	return j
 }
 
@@ -49,8 +45,8 @@ func RepoUpdateJob(job Job) error {
 	if job.ID < 0 || job.Valid == false {
 		return fmt.Errorf("job is not valid or has illegal ID")
 	}
-	mutex.Lock()
-	defer mutex.Unlock()
+	jobMutex.Lock()
+	defer jobMutex.Unlock()
 	for i, j := range jobs {
 		if j.ID == job.ID {
 			jobs[i].Running = job.Running
