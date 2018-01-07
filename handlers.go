@@ -125,12 +125,21 @@ func JobCreateJSON(w http.ResponseWriter, r *http.Request) {
 
 // JobCreateURLEnc creates a job from JSON POST data to /jobs endpoint
 func JobCreateURLEnc(w http.ResponseWriter, r *http.Request) {
-	job := Job{}
-	symbol := r.FormValue("symbol")
-	startDate := r.FormValue("startDate")
-	endDate := r.FormValue("endDate")
+	//job := Job{}
+	job := NewJob()
 
-	if (symbol == "") || (startDate == "") || (endDate == "") {
+	if err := r.ParseForm(); err != nil {
+		w.Header().Set("Content-Type", "text/plain")
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		log.Printf("no symbol in urlencoded form")
+		fmt.Fprintln(w, "error parsing form values")
+		return
+	}
+	for key, values := range r.PostForm {
+		job.Args[key] = values[0] // only using the first occurent of the parameter
+	}
+
+	if (job.Args["symbol"] == "") || (job.Args["startDate"] == "") || (job.Args["endDate"] == "") {
 		w.Header().Set("Content-Type", "text/plain")
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		log.Printf("no symbol in urlencoded form")
@@ -140,7 +149,7 @@ func JobCreateURLEnc(w http.ResponseWriter, r *http.Request) {
 
 	job.Recieved = time.Now()
 	job.Valid = true
-	j := RepoCreateJob(job)
+	j := RepoCreateJob(*job)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)
 	if err := json.NewEncoder(w).Encode(j); err != nil {
