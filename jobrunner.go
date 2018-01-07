@@ -3,27 +3,13 @@ package main
 import (
 	"log"
 	"os/exec"
-	"runtime"
-	"strconv"
 	"time"
 )
 
 func init() {
-	// number of processor cores to keep free, the rest will be used to run jobs
-	const keepFreeCores = 1
-	cores := 1
-	coresAvailable := runtime.NumCPU()
-	log.Println("Number of processor cores available: " + strconv.FormatInt(int64(coresAvailable), 10))
-	if coresAvailable > keepFreeCores {
-		cores = coresAvailable - keepFreeCores
-	}
-	log.Println("Number of processor cores to use: ", cores)
 
 	jobsToRun = make(chan int, 1000)
 
-	for i := 0; i < cores; i++ {
-		go worker(i, jobsToRun)
-	}
 }
 
 func worker(w int, jobChan <-chan int) {
