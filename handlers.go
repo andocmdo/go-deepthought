@@ -136,7 +136,7 @@ func JobCreateURLEnc(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	for key, values := range r.PostForm {
-		job.Args[key] = values[0] // only using the first occurent of the parameter
+		job.Args[key] = values[0] // only using the first occurence of the parameter
 	}
 
 	if (job.Args["symbol"] == "") || (job.Args["startDate"] == "") || (job.Args["endDate"] == "") {

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io/ioutil"
 	"log"
 	"os/exec"
 	"runtime"
@@ -41,7 +42,6 @@ func worker(w int, jobChan <-chan int) {
 		if err != nil {
 			log.Printf("error on job %d", id)
 			log.Printf(err.Error())
-			return
 		}
 		job.Running = true
 		job.Started = time.Now()
@@ -49,17 +49,22 @@ func worker(w int, jobChan <-chan int) {
 		if err != nil {
 			log.Printf("error on job %d", id)
 			log.Printf(err.Error())
-			return
 		}
 
 		// This is where we would process our job
-		time.Sleep(time.Second * 10)
-		out, err := exec.Command("gagoTest").Output()
+		cmd := exec.Command(job.Args["command"])
+		stdout, _ := cmd.StdoutPipe()
+		err = cmd.Start()
 		if err != nil {
 			log.Printf("error on job %d", id)
 			log.Printf(err.Error())
-			return
 		}
+		log.Printf("Job %d started", id)
+		err = cmd.Wait()
+		log.Printf("Command finished with error: %v", err)
+
+		out, _ := ioutil.ReadAll(stdout)
+
 		log.Printf("Job %d result: %s", id, string(out))
 
 		// And when finished, note the time, check for errors, etc
