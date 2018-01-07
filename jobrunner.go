@@ -47,7 +47,7 @@ func worker(w int, jobChan <-chan int) {
 		}
 
 		// This is where we would process our job
-		cmd := exec.Command(job.Args["command"])
+		cmd := exec.Command("date")
 		stdout, _ := cmd.StdoutPipe()
 		stderr, _ := cmd.StderrPipe()
 		err = cmd.Start()
