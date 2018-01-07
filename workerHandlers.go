@@ -103,6 +103,8 @@ func WorkerCreateURLEnc(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	worker.IPAddr = r.FormValue("ipaddr")
+	worker.Port = r.FormValue("port")
 	worker.Created = time.Now()
 	worker.Valid = true
 	wrkr := RepoCreateWorker(*worker)

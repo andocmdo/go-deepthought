@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-	"io/ioutil"
 	"log"
 	"os/exec"
 	"runtime"
@@ -47,25 +45,13 @@ func worker(w int, jobChan <-chan int) {
 		}
 
 		// This is where we would process our job
-		cmd := exec.Command("date")
-		stdout, _ := cmd.StdoutPipe()
-		stderr, _ := cmd.StderrPipe()
-		err = cmd.Start()
+		cmd := exec.Command("bash", "-c", "sleep 10; date")
+		out, err := cmd.Output()
 		if err != nil {
 			log.Printf("error on job %d", id)
 			log.Printf(err.Error())
 		}
-		log.Printf("Job %d started", id)
-
-		slurp, _ := ioutil.ReadAll(stderr)
-		fmt.Printf("%s\n", slurp)
-
-		err = cmd.Wait()
-		log.Printf("Command finished with error: %v", err)
-
-		out, _ := ioutil.ReadAll(stdout)
-
-		log.Printf("Job %d result: %s", id, string(out))
+		log.Printf("Job %d output: %s", id, out)
 
 		// And when finished, note the time, check for errors, etc
 		job.Ended = time.Now()

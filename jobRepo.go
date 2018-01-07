@@ -22,7 +22,7 @@ func init() {
 func RepoFindJob(id int) (Job, error) {
 	jobMutex.Lock()
 	defer jobMutex.Unlock()
-	if id <= currentJobID || len(jobs) != 0 { // currentJobID? or len(jobs), this is jank
+	if id >= 0 && len(jobs) != 0 && id <= currentJobID { // currentJobID? or len(jobs), this is jank
 		return jobs[id], nil
 	}
 	return Job{}, fmt.Errorf("can find job: %d", id)

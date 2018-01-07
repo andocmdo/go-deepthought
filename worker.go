@@ -9,7 +9,7 @@ type Worker struct {
 	Ready      bool      `json:"ready"`
 	Working    bool      `json:"working"`
 	IPAddr     string    `json:"ipaddr"`
-	Port       int       `json:"port"`
+	Port       string    `json:"port"`
 	Created    time.Time `json:"created"`
 	Destroyed  time.Time `json:"destroyed"`  // updateable
 	LastUpdate time.Time `json:"lastUpdate"` // updateable

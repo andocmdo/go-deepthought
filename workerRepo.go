@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"sync"
 	"time"
 )
@@ -22,7 +23,7 @@ func init() {
 func RepoFindWorker(id int) (Worker, error) {
 	workerMutex.Lock()
 	defer workerMutex.Unlock()
-	if id <= currentWorkerID || len(workers) != 0 { // currentID? or len(workers), this is jank
+	if id >= 0 && len(workers) != 0 && id <= currentWorkerID { // currentID? or len(workers), this is jank
 		return workers[id], nil
 	}
 	w := NewWorker()
@@ -33,10 +34,11 @@ func RepoFindWorker(id int) (Worker, error) {
 // RepoCreateWorker takes a worker and assigns it the next ID, then adds to workers slice
 func RepoCreateWorker(w Worker) Worker {
 	w.ID = currentWorkerID
+	log.Print("ReporCreateWorker", w)
 	workerMutex.Lock()
 	defer workerMutex.Unlock()
 	workers = append(workers, w)
-	queueWorker(w.ID) // TODO should we queue on creating worker? Or after creating, then worker says ready?
+	//queueWorker(w.ID) // TODO should we queue on creating worker? Or after creating, then worker says ready?
 	currentWorkerID++
 	return w
 }
