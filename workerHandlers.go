@@ -115,3 +115,39 @@ func WorkerCreateURLEnc(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, err.Error())
 	}
 }
+
+// WorkerUpdateJSON creates a worker from JSON POST data to /workers endpoint
+func WorkerUpdateJSON(w http.ResponseWriter, r *http.Request) {
+	var worker Worker
+	body, err := ioutil.ReadAll(io.LimitReader(r.Body, uploadLimit))
+	if err != nil {
+		w.Header().Set("Content-Type", "text/plain")
+		w.WriteHeader(http.StatusBadRequest)
+		log.Printf(err.Error())
+		fmt.Fprintln(w, err.Error())
+		return
+	}
+	if err := r.Body.Close(); err != nil {
+		w.Header().Set("Content-Type", "text/plain")
+		w.WriteHeader(http.StatusBadRequest)
+		log.Printf(err.Error())
+		fmt.Fprintln(w, err.Error())
+		return
+	}
+	if err := json.Unmarshal(body, &worker); err != nil {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusUnprocessableEntity) // unprocessable entity
+		log.Printf(err.Error())
+		fmt.Fprintln(w, err.Error())
+		return
+	}
+
+	//TODO meat and potatoes here until I refactor
+	wrkr := RepoUpdateWorker(worker)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusCreated)
+	if err := json.NewEncoder(w).Encode(wrkr); err != nil {
+		log.Printf(err.Error())
+		fmt.Fprintln(w, err.Error())
+	}
+}

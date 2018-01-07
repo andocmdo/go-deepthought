@@ -22,7 +22,7 @@ func init() {
 func RepoFindJob(id int) (Job, error) {
 	jobMutex.Lock()
 	defer jobMutex.Unlock()
-	if id >= 0 && len(jobs) != 0 && id <= currentJobID { // currentJobID? or len(jobs), this is jank
+	if validJobID(id) {
 		return jobs[id], nil
 	}
 	return Job{}, fmt.Errorf("can find job: %d", id)
@@ -40,23 +40,27 @@ func RepoCreateJob(j Job) Job {
 }
 
 // RepoUpdateJob updates a job that matches input job.ID, only updating updateable fields
-func RepoUpdateJob(job Job) error {
+func RepoUpdateJob(job Job) (Job, error) {
 	// check sanity first
-	if job.ID < 0 || job.Valid == false {
-		return fmt.Errorf("job is not valid or has illegal ID")
+	if validJobID(job.ID) {
+		jobMutex.Lock()
+		defer jobMutex.Unlock()
+
+		jobs[job.ID].Running = job.Running
+		jobs[job.ID].Started = job.Started
+		jobs[job.ID].Ended = job.Ended
+		jobs[job.ID].Completed = job.Completed
+		jobs[job.ID].Result = job.Result
+		jobs[job.ID].LastUpdate = time.Now()
+		return jobs[job.ID], nil
 	}
-	jobMutex.Lock()
-	defer jobMutex.Unlock()
-	for i, j := range jobs {
-		if j.ID == job.ID {
-			jobs[i].Running = job.Running
-			jobs[i].Started = job.Started
-			jobs[i].Ended = job.Ended
-			jobs[i].Completed = job.Completed
-			jobs[i].Result = job.Result
-			jobs[i].LastUpdate = time.Now()
-			return nil
-		}
+	job.Valid = false
+	return job, fmt.Errorf("job ID not found")
+}
+
+func validJobID(id int) bool {
+	if id >= 0 && len(jobs) != 0 && id <= currentJobID { // currentJobID? or len(jobs), this is jank
+		return true
 	}
-	return fmt.Errorf("job ID not found")
+	return false
 }

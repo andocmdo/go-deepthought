@@ -23,7 +23,7 @@ func init() {
 func RepoFindWorker(id int) (Worker, error) {
 	workerMutex.Lock()
 	defer workerMutex.Unlock()
-	if id >= 0 && len(workers) != 0 && id <= currentWorkerID { // currentID? or len(workers), this is jank
+	if validWorkerID(id) { // currentID? or len(workers), this is jank
 		return workers[id], nil
 	}
 	w := NewWorker()
@@ -34,7 +34,7 @@ func RepoFindWorker(id int) (Worker, error) {
 // RepoCreateWorker takes a worker and assigns it the next ID, then adds to workers slice
 func RepoCreateWorker(w Worker) Worker {
 	w.ID = currentWorkerID
-	log.Print("ReporCreateWorker", w)
+	log.Print("RepoCreateWorker", w)
 	workerMutex.Lock()
 	defer workerMutex.Unlock()
 	workers = append(workers, w)
@@ -46,17 +46,24 @@ func RepoCreateWorker(w Worker) Worker {
 // RepoUpdateWorker updates a worker that matches input worker.ID, only updating updateable fields
 func RepoUpdateWorker(worker Worker) error {
 	// check sanity first
-	if worker.ID < 0 || worker.Valid == false {
-		return fmt.Errorf("worker is not valid or has illegal ID")
-	}
-	workerMutex.Lock()
-	defer workerMutex.Unlock()
-	for i, w := range workers {
-		if w.ID == worker.ID {
-			workers[i].Destroyed = worker.Destroyed
-			workers[i].LastUpdate = time.Now()
-			return nil
-		}
+	if validWorkerID(worker.ID) {
+		workerMutex.Lock()
+		defer workerMutex.Unlock()
+
+		workers[worker.ID].Destroyed = worker.Destroyed
+		workers[worker.ID].Ready = worker.Ready
+		workers[worker.ID].Working = worker.Working
+		//workers[i].IPAddr = worker.IPAddr
+		//workers[i].Port = worker.Port
+		workers[worker.ID].LastUpdate = time.Now()
+		return nil
 	}
 	return fmt.Errorf("worker ID not found")
+}
+
+func validWorkerID(id int) bool {
+	if id >= 0 && len(workers) != 0 && id <= currentWorkerID { // currentID? or len(workers), this is jank
+		return true
+	}
+	return false
 }

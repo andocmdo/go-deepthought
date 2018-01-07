@@ -38,7 +38,7 @@ func worker(w int, jobChan <-chan int) {
 		}
 		job.Running = true
 		job.Started = time.Now()
-		err = RepoUpdateJob(job)
+		_, err = RepoUpdateJob(job)
 		if err != nil {
 			log.Printf("error on job %d", id)
 			log.Printf(err.Error())
@@ -59,7 +59,7 @@ func worker(w int, jobChan <-chan int) {
 		job.Completed = true
 		job.Result = string(out)
 
-		err = RepoUpdateJob(job)
+		_, err = RepoUpdateJob(job)
 		if err != nil {
 			log.Printf("error on job %d", id)
 			log.Printf(err.Error())

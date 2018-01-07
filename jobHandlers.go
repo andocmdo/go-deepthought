@@ -79,6 +79,8 @@ func JobCreateJSON(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, err.Error())
 		return
 	}
+
+	//TODO Meat and potatoes here until I refactor
 	job.Recieved = time.Now()
 	job.Valid = true
 	j := RepoCreateJob(job)
@@ -114,9 +116,46 @@ func JobCreateURLEnc(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Meat and Potatoes here, until I refactor this mess....
 	job.Recieved = time.Now()
 	job.Valid = true
 	j := RepoCreateJob(*job)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusCreated)
+	if err := json.NewEncoder(w).Encode(j); err != nil {
+		log.Printf(err.Error())
+		fmt.Fprintln(w, err.Error())
+	}
+}
+
+// JobUpdateJSON updates a job from JSON POST data to /jobs endpoint
+func JobUpdateJSON(w http.ResponseWriter, r *http.Request) {
+	var job Job
+	body, err := ioutil.ReadAll(io.LimitReader(r.Body, uploadLimit))
+	if err != nil {
+		w.Header().Set("Content-Type", "text/plain")
+		w.WriteHeader(http.StatusBadRequest)
+		log.Printf(err.Error())
+		fmt.Fprintln(w, err.Error())
+		return
+	}
+	if err := r.Body.Close(); err != nil {
+		w.Header().Set("Content-Type", "text/plain")
+		w.WriteHeader(http.StatusBadRequest)
+		log.Printf(err.Error())
+		fmt.Fprintln(w, err.Error())
+		return
+	}
+	if err := json.Unmarshal(body, &job); err != nil {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusUnprocessableEntity) // unprocessable entity
+		log.Printf(err.Error())
+		fmt.Fprintln(w, err.Error())
+		return
+	}
+
+	// TODO Meat and Potatoes here, until I refactor this mess....
+	j, _ := RepoUpdateJob(job) // check this error
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)
 	if err := json.NewEncoder(w).Encode(j); err != nil {
