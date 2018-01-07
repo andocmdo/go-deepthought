@@ -129,33 +129,7 @@ func JobCreateURLEnc(w http.ResponseWriter, r *http.Request) {
 	symbol := r.FormValue("symbol")
 	startDate := r.FormValue("startDate")
 	endDate := r.FormValue("endDate")
-	popSizeS := r.FormValue("popSize")
-	popSize, err := strconv.Atoi(popSizeS)
-	if err != nil {
-		w.Header().Set("Content-Type", "text/plain")
-		w.WriteHeader(http.StatusUnprocessableEntity)
-		log.Printf("popSize unable to be parsed in urlencoded form")
-		fmt.Fprintln(w, "popSize unable to be parsed in urlencoded form")
-		return
-	}
-	mutRateS := r.FormValue("mutRate")
-	mutRate, err := strconv.ParseFloat(mutRateS, 64)
-	if err != nil {
-		w.Header().Set("Content-Type", "text/plain")
-		w.WriteHeader(http.StatusUnprocessableEntity)
-		log.Printf("mutRate unable to be parsed in urlencoded form")
-		fmt.Fprintln(w, "mutRate unable to be parsed in urlencoded form")
-		return
-	}
-	maxGenS := r.FormValue("maxGen")
-	maxGen, err := strconv.Atoi(maxGenS)
-	if err != nil {
-		w.Header().Set("Content-Type", "text/plain")
-		w.WriteHeader(http.StatusUnprocessableEntity)
-		log.Printf("maxGen unable to be parsed in urlencoded form")
-		fmt.Fprintln(w, "maxGen unable to be parsed in urlencoded form")
-		return
-	}
+
 	if (symbol == "") || (startDate == "") || (endDate == "") {
 		w.Header().Set("Content-Type", "text/plain")
 		w.WriteHeader(http.StatusUnprocessableEntity)
@@ -163,12 +137,7 @@ func JobCreateURLEnc(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "no symbol in urlencoded form")
 		return
 	}
-	job.Symbol = symbol
-	job.StartDate = startDate
-	job.EndDate = endDate
-	job.PopSize = popSize
-	job.MutRate = mutRate
-	job.MaxGen = maxGen
+
 	job.Recieved = time.Now()
 	job.Valid = true
 	j := RepoCreateJob(job)
