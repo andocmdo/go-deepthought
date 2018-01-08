@@ -37,7 +37,6 @@ func RepoCreateWorker(w Worker) Worker {
 	workerMutex.Lock()
 	defer workerMutex.Unlock()
 	workers = append(workers, w)
-	//queueWorker(w.ID) // TODO should we queue on creating worker? Or after creating, then worker says ready?
 	currentWorkerID++
 	return w
 }
