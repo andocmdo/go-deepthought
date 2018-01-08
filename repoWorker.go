@@ -50,7 +50,6 @@ func RepoUpdateWorker(worker Worker) (Worker, error) {
 		workerMutex.Lock()
 		defer workerMutex.Unlock()
 
-		workers[worker.ID].Destroyed = worker.Destroyed
 		workers[worker.ID].Ready = worker.Ready
 		workers[worker.ID].Working = worker.Working
 		//workers[i].IPAddr = worker.IPAddr

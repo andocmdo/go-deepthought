@@ -6,12 +6,11 @@ import "time"
 type Worker struct {
 	ID         int       `json:"id"`
 	Valid      bool      `json:"valid"`
-	Ready      bool      `json:"ready"`   // updateable
-	Working    bool      `json:"working"` // updateable
+	Created    time.Time `json:"created"`
 	IPAddr     string    `json:"ipaddr"`
 	Port       string    `json:"port"`
-	Created    time.Time `json:"created"`
-	Destroyed  time.Time `json:"destroyed"`  // updateable
+	Ready      bool      `json:"ready"`      // updateable
+	Working    bool      `json:"working"`    // updateable
 	LastUpdate time.Time `json:"lastUpdate"` // updateable
 }
 

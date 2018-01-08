@@ -10,11 +10,11 @@ type Job struct {
 	Running    bool              `json:"running"`    // updateable
 	Completed  bool              `json:"completed"`  // updateable
 	Created    time.Time         `json:"created"`
-	Started    time.Time         `json:"started"`    // updateable
-	Ended      time.Time         `json:"ended"`      // updateable
-	LastUpdate time.Time         `json:"lastUpdate"` // updateable
+	Started    time.Time         `json:"started"` // updateable
+	Ended      time.Time         `json:"ended"`   // updateable
 	Args       map[string]string `json:"args"`
-	Result     string            `json:"result"` // updateable
+	Result     string            `json:"result"`     // updateable
+	LastUpdate time.Time         `json:"lastUpdate"` // updateable
 }
 
 var jobsToRun chan int

@@ -46,10 +46,11 @@ func RepoUpdateJob(job Job) (Job, error) {
 		jobMutex.Lock()
 		defer jobMutex.Unlock()
 
+		jobs[job.ID].Dispatched = job.Dispatched
 		jobs[job.ID].Running = job.Running
+		jobs[job.ID].Completed = job.Completed
 		jobs[job.ID].Started = job.Started
 		jobs[job.ID].Ended = job.Ended
-		jobs[job.ID].Completed = job.Completed
 		jobs[job.ID].Result = job.Result
 		jobs[job.ID].LastUpdate = time.Now()
 		return jobs[job.ID], nil
