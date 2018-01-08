@@ -15,10 +15,10 @@ type Worker struct {
 	LastUpdate time.Time `json:"lastUpdate"` // updateable
 }
 
+var readyWorkers chan int
+
 // Workers is a slice of worker
 type Workers []Worker
-
-var readyWorkers chan int
 
 // NewWorker is a constructor for Worker structs (init Args map)
 func NewWorker() *Worker {

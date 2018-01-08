@@ -6,9 +6,10 @@ import "time"
 type Job struct {
 	ID         int               `json:"id"`
 	Valid      bool              `json:"valid"`
-	Running    bool              `json:"running"`   // updateable
-	Completed  bool              `json:"completed"` // updateable
-	Recieved   time.Time         `json:"recieved"`
+	Dispatched bool              `json:"dispatched"` // updateable
+	Running    bool              `json:"running"`    // updateable
+	Completed  bool              `json:"completed"`  // updateable
+	Created    time.Time         `json:"created"`
 	Started    time.Time         `json:"started"`    // updateable
 	Ended      time.Time         `json:"ended"`      // updateable
 	LastUpdate time.Time         `json:"lastUpdate"` // updateable
@@ -16,10 +17,10 @@ type Job struct {
 	Result     string            `json:"result"` // updateable
 }
 
+var jobsToRun chan int
+
 // Jobs is a slice of Job
 type Jobs []Job
-
-var jobsToRun chan int
 
 // NewJob is a constructor for Job structs (init Args map)
 func NewJob() *Job {

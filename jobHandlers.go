@@ -81,7 +81,7 @@ func JobCreateJSON(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//TODO Meat and potatoes here until I refactor
-	job.Recieved = time.Now()
+	job.Created = time.Now()
 	job.Valid = true
 	j := RepoCreateJob(job)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
@@ -117,7 +117,7 @@ func JobCreateURLEnc(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Meat and Potatoes here, until I refactor this mess....
-	job.Recieved = time.Now()
+	job.Created = time.Now()
 	job.Valid = true
 	j := RepoCreateJob(*job)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
