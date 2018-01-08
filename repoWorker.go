@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"sync"
 	"time"
 )
@@ -34,7 +33,7 @@ func RepoFindWorker(id int) (Worker, error) {
 // RepoCreateWorker takes a worker and assigns it the next ID, then adds to workers slice
 func RepoCreateWorker(w Worker) Worker {
 	w.ID = currentWorkerID
-	log.Print("RepoCreateWorker", w)
+	//log.Print("RepoCreateWorker", w)
 	workerMutex.Lock()
 	defer workerMutex.Unlock()
 	workers = append(workers, w)
@@ -55,6 +54,13 @@ func RepoUpdateWorker(worker Worker) (Worker, error) {
 		//workers[i].IPAddr = worker.IPAddr
 		//workers[i].Port = worker.Port
 		workers[worker.ID].LastUpdate = time.Now()
+
+		// if this update was to notify a worker was ready, then add to the queue
+		if workers[worker.ID].Ready == true {
+			queueWorker(worker.ID)
+		}
+
+		// now return the updated info
 		return workers[worker.ID], nil
 	}
 	worker.Valid = false
