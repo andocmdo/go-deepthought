@@ -47,6 +47,7 @@ func dealer(d int, jobChan <-chan int, workerChan <-chan int) {
 			*/
 
 			// This is where we send out job
+			// connect to tcp port and send job data
 			log.Printf("Dealer %d sent job %d to worker %d ", d, jobID, workerID)
 
 			// And when finished, note the time, check for errors, etc
