@@ -2,27 +2,19 @@ package main
 
 import (
 	"log"
-	"runtime"
-	"strconv"
 )
 
+const jobQueueSize = 10000
+const workerQueueSize = 500
+
 func init() {
-	jobsToRun = make(chan int, 10000)
-	readyWorkers = make(chan int, 500)
+	jobsToRun = make(chan int, jobQueueSize)
+	readyWorkers = make(chan int, workerQueueSize)
 
-	// number of processor cores to keep free, the rest will be used to run jobs
-	const keepFreeCores = 1
-	cores := 1
-	coresAvailable := runtime.NumCPU()
-	log.Println("Number of processor cores available: " + strconv.FormatInt(int64(coresAvailable), 10))
-	if coresAvailable > keepFreeCores {
-		cores = coresAvailable - keepFreeCores
-	}
-	log.Println("Number of processor cores to use for job dealers: ", cores)
+	log.Println("Job queue size: ", jobQueueSize)
+	log.Println("Worker queue size: ", workerQueueSize)
 
-	for i := 0; i < cores; i++ {
-		go dealer(i, jobsToRun, readyWorkers)
-	}
+	go dealer(0, jobsToRun, readyWorkers)
 }
 
 // Dealer depyloys jobs to waiting workers
