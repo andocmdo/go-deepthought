@@ -127,14 +127,14 @@ func WorkerUpdateJSON(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, err.Error())
 		return
 	}
-	if err := r.Body.Close(); err != nil {
+	if errr := r.Body.Close(); errr != nil {
 		w.Header().Set("Content-Type", "text/plain")
 		w.WriteHeader(http.StatusBadRequest)
 		log.Printf(err.Error())
 		fmt.Fprintln(w, err.Error())
 		return
 	}
-	if err := json.Unmarshal(body, &worker); err != nil {
+	if errrr := json.Unmarshal(body, &worker); errrr != nil {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusUnprocessableEntity) // unprocessable entity
 		log.Printf(err.Error())
