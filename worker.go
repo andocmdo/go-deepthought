@@ -6,8 +6,8 @@ import "time"
 type Worker struct {
 	ID         int       `json:"id"`
 	Valid      bool      `json:"valid"`
-	Ready      bool      `json:"ready"`
-	Working    bool      `json:"working"`
+	Ready      bool      `json:"ready"`   // updateable
+	Working    bool      `json:"working"` // updateable
 	IPAddr     string    `json:"ipaddr"`
 	Port       string    `json:"port"`
 	Created    time.Time `json:"created"`
