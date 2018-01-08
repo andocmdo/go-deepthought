@@ -62,7 +62,7 @@ func dealer(d int, jobChan <-chan int, workerChan <-chan int) {
 				log.Printf(err.Error())
 				return
 			}
-			log.Printf("worker %d finished job %d", d, jobID)
+			log.Printf("dealer %d successfully dispatched job %d to worker %d", d, jobID, workerID)
 		}
 	}
 }
