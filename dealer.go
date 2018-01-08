@@ -7,8 +7,8 @@ import (
 )
 
 func init() {
-	jobsToRun = make(chan int, 5000)
-	readyWorkers = make(chan int, 100)
+	jobsToRun = make(chan int, 10000)
+	readyWorkers = make(chan int, 500)
 
 	// number of processor cores to keep free, the rest will be used to run jobs
 	const keepFreeCores = 1
