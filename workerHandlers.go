@@ -65,22 +65,31 @@ func WorkerCreateJSON(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, err.Error())
 		return
 	}
-	if err := r.Body.Close(); err != nil {
+	if err = r.Body.Close(); err != nil {
 		w.Header().Set("Content-Type", "text/plain")
 		w.WriteHeader(http.StatusBadRequest)
 		log.Printf(err.Error())
 		fmt.Fprintln(w, err.Error())
 		return
 	}
-	if err := json.Unmarshal(body, &worker); err != nil {
+	if err = json.Unmarshal(body, &worker); err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusUnprocessableEntity) // unprocessable entity
 		log.Printf(err.Error())
 		fmt.Fprintln(w, err.Error())
 		return
 	}
+	if worker.Port == "" {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusUnprocessableEntity) // unprocessable entity
+		log.Printf("missing port for worker creation request, it is required.")
+		fmt.Fprintln(w, err.Error())
+		return
+	}
+
 	worker.Created = time.Now()
 	worker.Valid = true
+	worker.IPAddr = r.RemoteAddr
 	wrkr := RepoCreateWorker(worker)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)
@@ -102,9 +111,16 @@ func WorkerCreateURLEnc(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "error parsing worker form values")
 		return
 	}
-
 	worker.IPAddr = r.FormValue("ipaddr")
 	worker.Port = r.FormValue("port")
+	if worker.Port == "" {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusUnprocessableEntity) // unprocessable entity
+		log.Printf("missing port for worker creation request, it is required.")
+		fmt.Fprintln(w, "missing port for worker creation request, it is required.")
+		return
+	}
+
 	worker.Created = time.Now()
 	worker.Valid = true
 	wrkr := RepoCreateWorker(*worker)
