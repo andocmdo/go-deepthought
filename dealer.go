@@ -7,6 +7,9 @@ import (
 const jobQueueSize = 10000
 const workerQueueSize = 500
 
+var jobsToRun chan int
+var readyWorkers chan int
+
 func init() {
 	jobsToRun = make(chan int, jobQueueSize)
 	readyWorkers = make(chan int, workerQueueSize)

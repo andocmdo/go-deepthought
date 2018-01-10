@@ -34,7 +34,7 @@ func RepoCreateJob(j Job) Job {
 	jobMutex.Lock()
 	defer jobMutex.Unlock()
 	jobs = append(jobs, j)
-	queueJob(j.ID)
+	jobsToRun <- j.ID
 	currentJobID++
 	return j
 }

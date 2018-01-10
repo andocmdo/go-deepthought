@@ -56,7 +56,7 @@ func RepoUpdateWorker(worker Worker) (Worker, error) {
 
 		// if this update was to notify a worker was ready, then add to the queue
 		if workers[worker.ID].Ready == true {
-			queueWorker(worker.ID)
+			readyWorkers <- worker.ID
 		}
 
 		// now return the updated info

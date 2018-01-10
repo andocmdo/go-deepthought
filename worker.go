@@ -14,8 +14,6 @@ type Worker struct {
 	LastUpdate time.Time `json:"lastUpdate"` // updateable
 }
 
-var readyWorkers chan int
-
 // Workers is a slice of worker
 type Workers []Worker
 
@@ -24,8 +22,4 @@ func NewWorker() *Worker {
 	var w Worker
 	//j.Args = make(map[string]string)
 	return &w
-}
-
-func queueWorker(id int) {
-	readyWorkers <- id
 }

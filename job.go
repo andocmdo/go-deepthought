@@ -5,6 +5,7 @@ import "time"
 // Job contains state data for jobs
 type Job struct {
 	ID         int               `json:"id"`
+	WorkerID   int               `json:"workerID"` // updateable
 	Valid      bool              `json:"valid"`
 	Dispatched bool              `json:"dispatched"` // updateable
 	Running    bool              `json:"running"`    // updateable
@@ -17,8 +18,6 @@ type Job struct {
 	LastUpdate time.Time         `json:"lastUpdate"` // updateable
 }
 
-var jobsToRun chan int
-
 // Jobs is a slice of Job
 type Jobs []Job
 
@@ -27,8 +26,4 @@ func NewJob() *Job {
 	var j Job
 	j.Args = make(map[string]string)
 	return &j
-}
-
-func queueJob(id int) {
-	jobsToRun <- id
 }
