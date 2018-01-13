@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	gostock "github.com/andocmdo/gostockd/common"
@@ -90,7 +91,8 @@ func WorkerCreateJSON(w http.ResponseWriter, r *http.Request) {
 
 	worker.Created = time.Now()
 	worker.Valid = true
-	worker.IPAddr = r.RemoteAddr
+	ipAndPort := r.RemoteAddr
+	worker.IPAddr = strings.Split(ipAndPort, ":")[0]
 	wrkr := RepoCreateWorker(worker)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)

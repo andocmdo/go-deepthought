@@ -45,8 +45,11 @@ func dealer(d int, jobChan <-chan int, workerChan <-chan int) {
 		// connect to tcp port and send job data
 		log.Printf("dealer %d has started sending job %d to worker %d", d, jobID, workerID)
 		requester, _ := zmq.NewSocket(zmq.REQ)
+		log.Printf("dealer %d created zmq.REQ socket for job %d to worker %d", d, jobID, workerID)
 		requester.Connect("tcp://" + wrkr.IPAddr + ":" + wrkr.Port)
+		log.Printf("dealer %d connected for job %d to worker %d", d, jobID, workerID)
 		requester.Send("hello", 0)
+		log.Printf("dealer %d sent hello for job %d to worker %d", d, jobID, workerID)
 		reply, _ := requester.Recv(0)
 		fmt.Printf("Received reply [%s]\n", reply)
 		requester.Close()
