@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"sync"
 	"time"
+
+	gostock "github.com/andocmdo/gostockd/common"
 )
 
 var currentWorkerID int
-var workers Workers
+var workers gostock.Workers
 var workerMutex *sync.Mutex
 
 // Initialize mutex and fake DB
@@ -19,19 +21,19 @@ func init() {
 }
 
 // RepoFindWorker searches for a worker with id inside mock DB
-func RepoFindWorker(id int) (Worker, error) {
+func RepoFindWorker(id int) (gostock.Worker, error) {
 	workerMutex.Lock()
 	defer workerMutex.Unlock()
 	if validWorkerID(id) { // currentID? or len(workers), this is jank
 		return workers[id], nil
 	}
-	w := NewWorker()
+	w := gostock.NewWorker()
 	w.Valid = false
 	return *w, fmt.Errorf("can find worker: %d", id)
 }
 
 // RepoCreateWorker takes a worker and assigns it the next ID, then adds to workers slice
-func RepoCreateWorker(w Worker) Worker {
+func RepoCreateWorker(w gostock.Worker) gostock.Worker {
 	w.ID = currentWorkerID
 	//log.Print("RepoCreateWorker", w)
 	workerMutex.Lock()
@@ -42,7 +44,7 @@ func RepoCreateWorker(w Worker) Worker {
 }
 
 // RepoUpdateWorker updates a worker that matches input worker.ID, only updating updateable fields
-func RepoUpdateWorker(worker Worker) (Worker, error) {
+func RepoUpdateWorker(worker gostock.Worker) (gostock.Worker, error) {
 	// check sanity first
 	if validWorkerID(worker.ID) {
 		workerMutex.Lock()

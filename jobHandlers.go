@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"time"
 
+	gostock "github.com/andocmdo/gostockd/common"
 	"github.com/gorilla/mux"
 )
 
@@ -56,7 +57,7 @@ func JobShow(w http.ResponseWriter, r *http.Request) {
 
 // JobCreateJSON creates a job from JSON POST data to /jobs endpoint
 func JobCreateJSON(w http.ResponseWriter, r *http.Request) {
-	var job Job
+	var job gostock.Job
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, uploadLimit))
 	if err != nil {
 		w.Header().Set("Content-Type", "text/plain")
@@ -95,7 +96,7 @@ func JobCreateJSON(w http.ResponseWriter, r *http.Request) {
 // JobCreateURLEnc creates a job from JSON POST data to /jobs endpoint
 func JobCreateURLEnc(w http.ResponseWriter, r *http.Request) {
 	//job := Job{}
-	job := NewJob()
+	job := gostock.NewJob()
 
 	if err := r.ParseForm(); err != nil {
 		w.Header().Set("Content-Type", "text/plain")
@@ -130,7 +131,7 @@ func JobCreateURLEnc(w http.ResponseWriter, r *http.Request) {
 
 // JobUpdateJSON updates a job from JSON POST data to /jobs endpoint
 func JobUpdateJSON(w http.ResponseWriter, r *http.Request) {
-	var job Job
+	var job gostock.Job
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, uploadLimit))
 	if err != nil {
 		w.Header().Set("Content-Type", "text/plain")
