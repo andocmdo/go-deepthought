@@ -1,10 +1,9 @@
 package main
 
 import (
-	"fmt"
+	"encoding/gob"
 	"log"
-
-	zmq "github.com/pebbe/zmq4"
+	"net"
 )
 
 const jobQueueSize = 10000
@@ -43,17 +42,22 @@ func dealer(d int, jobChan <-chan int, workerChan <-chan int) {
 
 		// This is where we send out job
 		// connect to tcp port and send job data
-		log.Printf("dealer %d has started sending job %d to worker %d", d, jobID, workerID)
-		requester, _ := zmq.NewSocket(zmq.REQ)
-		log.Printf("dealer %d created zmq.REQ socket for job %d to worker %d", d, jobID, workerID)
-		requester.Connect("tcp://" + wrkr.IPAddr + ":" + wrkr.Port)
-		log.Printf("dealer %d connected for job %d to worker %d", d, jobID, workerID)
-		requester.Send("hello", 0)
-		log.Printf("dealer %d sent hello for job %d to worker %d", d, jobID, workerID)
-		reply, _ := requester.Recv(0)
-		fmt.Printf("Received reply [%s]\n", reply)
-		requester.Close()
+		conn, err := net.Dial("tcp", wrkr.IPAddr+":"+wrkr.Port)
+		if err != nil {
+			log.Printf("dealer %d encountered an error connecting to worker %d", d, workerID)
+			log.Printf(err.Error())
+		}
+		enc := gob.NewEncoder(conn) // Will write to network.
+		dec := gob.NewDecoder(conn) // Will read from network.
+		err = enc.Encode(job)
+		if err != nil {
+			log.Fatal("encode error:", err)
+		}
 
+		err = dec.Decode(&job)
+		if err != nil {
+			log.Fatal("decode error 1: ", err)
+		}
 		log.Printf("Dealer %d sent job %d to worker %d ", d, jobID, workerID)
 
 		// And when finished, note the time, check for errors, etc
