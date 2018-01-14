@@ -43,6 +43,7 @@ func dealer(d int, jobChan <-chan int, workerChan <-chan int) {
 		// This is where we send out job
 		// connect to tcp port and send job data
 		conn, err := net.Dial("tcp", wrkr.IPAddr+":"+wrkr.Port)
+		defer conn.Close()
 		if err != nil {
 			log.Printf("dealer %d encountered an error connecting to worker %d", d, workerID)
 			log.Printf(err.Error())
@@ -54,11 +55,19 @@ func dealer(d int, jobChan <-chan int, workerChan <-chan int) {
 			log.Fatal("encode error:", err)
 		}
 
-		err = dec.Decode(&job)
+		/*
+			err = dec.Decode(&job)
+			if err != nil {
+				log.Fatal("decode error 1: ", err)
+			}
+			log.Printf("Dealer %d sent job %d to worker %d ", d, jobID, workerID)
+		*/
+		didItWork := false
+		err = dec.Decode(&didItWork)
 		if err != nil {
 			log.Fatal("decode error 1: ", err)
 		}
-		log.Printf("Dealer %d sent job %d to worker %d ", d, jobID, workerID)
+		log.Printf("Dealer %d got response %t from worker %d ", d, didItWork, workerID)
 
 		// And when finished, note the time, check for errors, etc
 		job.Dispatched = true
