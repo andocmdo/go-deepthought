@@ -53,6 +53,12 @@ func dealer(d int, jobChan <-chan int, workerChan <-chan int) {
 		// using JSON now instead of gob, keeping this for notes. Remove before committing Andy
 		enc := json.NewEncoder(conn) // Will write to network.
 		dec := json.NewDecoder(conn) // Will read from network.
+
+		// set the workerID and jobID for both worker and job
+		wrkr.JobID = jobID
+		job.WorkerID = workerID
+
+		// now send the JSON job to a worker
 		err = enc.Encode(job)
 		if err != nil {
 			log.Fatal("encode error:", err)

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"sync"
 	"time"
 
@@ -51,7 +52,10 @@ func RepoUpdateWorker(worker gostock.Worker) (gostock.Worker, error) {
 		workerMutex.Lock()
 		defer workerMutex.Unlock()
 
+		//TODO remove this debug loggin
+		log.Printf("setting worker at index %d to have a jobID of %d", worker.ID, worker.JobID)
 		workers[worker.ID].JobID = worker.JobID
+		log.Printf("set worker at index %d to have a jobID of %d", worker.ID, worker.JobID)
 		workers[worker.ID].Ready = worker.Ready
 		workers[worker.ID].Working = worker.Working
 		//workers[i].IPAddr = worker.IPAddr

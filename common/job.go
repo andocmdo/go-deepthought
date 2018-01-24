@@ -5,17 +5,17 @@ import "time"
 // Job contains state data for jobs
 type Job struct {
 	ID         int               `json:"id"`
-	WorkerID   int               `json:"workerID"` // updateable by server
+	WorkerID   int               `json:"workerID"` // updateable
 	Valid      bool              `json:"valid"`
-	Dispatched bool              `json:"dispatched"` // updateable by server
-	Running    bool              `json:"running"`    // updateable by server
-	Completed  bool              `json:"completed"`  // updateable by server
+	Dispatched bool              `json:"dispatched"` // updateable
+	Running    bool              `json:"running"`    // updateable
+	Completed  bool              `json:"completed"`  // updateable
 	Created    time.Time         `json:"created"`
-	Started    time.Time         `json:"started"` // updateable by server
-	Ended      time.Time         `json:"ended"`   // updateable by server
+	Started    time.Time         `json:"started"` // updateable
+	Ended      time.Time         `json:"ended"`   // updateable
 	Args       map[string]string `json:"args"`
-	Result     string            `json:"result"`     // updateable by client
-	LastUpdate time.Time         `json:"lastUpdate"` // updateable by server
+	Result     string            `json:"result"`     // updateable
+	LastUpdate time.Time         `json:"lastUpdate"` // updateable
 }
 
 // Jobs is a slice of Job
