@@ -48,6 +48,7 @@ func RepoUpdateJob(job gostock.Job) (gostock.Job, error) {
 		jobMutex.Lock()
 		defer jobMutex.Unlock()
 
+		jobs[job.ID].WorkerID = job.WorkerID
 		jobs[job.ID].Dispatched = job.Dispatched
 		jobs[job.ID].Running = job.Running
 		jobs[job.ID].Completed = job.Completed
