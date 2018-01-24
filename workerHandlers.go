@@ -165,14 +165,13 @@ func WorkerUpdateJSON(w http.ResponseWriter, r *http.Request) {
 	// was requested
 	vars := mux.Vars(r)
 	workerID, err := strconv.Atoi(vars["workerID"])
-	if err != nil {
+	if err != nil || workerID != worker.ID {
 		w.Header().Set("Content-Type", "text/plain")
 		w.WriteHeader(http.StatusBadRequest)
 		log.Printf(err.Error())
 		fmt.Fprintln(w, err.Error())
 		return
 	}
-	worker.ID = workerID
 
 	//TODO meat and potatoes here until I refactor
 	wrkr, _ := RepoUpdateWorker(worker) // check this error
