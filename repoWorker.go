@@ -44,6 +44,7 @@ func RepoCreateWorker(w gostock.Worker) gostock.Worker {
 }
 
 // RepoUpdateWorker updates a worker that matches input worker.ID, only updating updateable fields
+// TODO this is horrific crap with the +1. HAVE TO FIX THIS
 func RepoUpdateWorker(worker gostock.Worker) (gostock.Worker, error) {
 	// check sanity first
 	if validWorkerID(worker.ID) {

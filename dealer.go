@@ -1,7 +1,7 @@
 package main
 
 import (
-	"encoding/gob"
+	"encoding/json"
 	"log"
 	"net"
 )
@@ -30,6 +30,7 @@ func dealer(d int, jobChan <-chan int, workerChan <-chan int) {
 		jobID := <-jobChan
 		log.Printf("dealer %d is sending job %d to worker %d", d, jobID, workerID)
 		job, err := RepoFindJob(jobID)
+		log.Printf("dealer %d found job %d : %+v", d, jobID, job)
 		if err != nil {
 			log.Printf("dealer %d encountered an error finding job %d to send to worker %d", d, jobID, workerID)
 			log.Printf(err.Error())
@@ -43,34 +44,35 @@ func dealer(d int, jobChan <-chan int, workerChan <-chan int) {
 		// This is where we send out job
 		// connect to tcp port and send job data
 		conn, err := net.Dial("tcp", wrkr.IPAddr+":"+wrkr.Port)
-		defer conn.Close()
+
 		if err != nil {
 			log.Printf("dealer %d encountered an error connecting to worker %d", d, workerID)
 			log.Printf(err.Error())
 		}
-		enc := gob.NewEncoder(conn) // Will write to network.
-		dec := gob.NewDecoder(conn) // Will read from network.
+
+		// using JSON now instead of gob, keeping this for notes. Remove before committing Andy
+		enc := json.NewEncoder(conn) // Will write to network.
+		dec := json.NewDecoder(conn) // Will read from network.
 		err = enc.Encode(job)
 		if err != nil {
 			log.Fatal("encode error:", err)
 		}
+		log.Printf("Dealer %d sent job %d to worker %d ", d, jobID, workerID)
 
-		/*
-			err = dec.Decode(&job)
-			if err != nil {
-				log.Fatal("decode error 1: ", err)
-			}
-			log.Printf("Dealer %d sent job %d to worker %d ", d, jobID, workerID)
-		*/
-		didItWork := false
-		err = dec.Decode(&didItWork)
+		err = dec.Decode(&job)
 		if err != nil {
+			// TODO check if job is valid, if not there was some other error, and we
+			// should reschedule the job here
 			log.Fatal("decode error 1: ", err)
 		}
-		log.Printf("Dealer %d got response %t from worker %d ", d, didItWork, workerID)
+
+		log.Printf("Dealer %d got confirmation from worker %d ", d, workerID)
+		log.Printf("%+v", job)
 
 		// And when finished, note the time, check for errors, etc
 		job.Dispatched = true
+		job.WorkerID = job.ID
+		//worker.JobID //TODO update the worker with the jobID it is running.
 		_, err = RepoUpdateJob(job)
 		if err != nil {
 			log.Printf("error dispatching job %d", jobID)
@@ -78,6 +80,7 @@ func dealer(d int, jobChan <-chan int, workerChan <-chan int) {
 			return
 		}
 		log.Printf("dealer %d successfully dispatched job %d to worker %d", d, jobID, workerID)
+		conn.Close()
 
 	}
 }
