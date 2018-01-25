@@ -73,7 +73,7 @@ func dealer(d int, jobChan <-chan int, workerChan <-chan int) {
 		}
 
 		log.Printf("Dealer %d got confirmation from worker %d ", d, workerID)
-		log.Printf("%+v", job)
+		//log.Printf("%+v", job)
 
 		// And when finished, note the time, check for errors, etc
 		job.Dispatched = true
