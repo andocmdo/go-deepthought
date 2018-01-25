@@ -161,8 +161,7 @@ func WorkerUpdateJSON(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// No matter what ID is sent in the JSON, we are going to only update what url
-	// was requested
+	// Worker ID and URL should match
 	vars := mux.Vars(r)
 	workerID, err := strconv.Atoi(vars["workerID"])
 	if err != nil || workerID != worker.ID {
@@ -172,6 +171,8 @@ func WorkerUpdateJSON(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, err.Error())
 		return
 	}
+
+	// TODO remove this debug stuff after fixing bug for index out of bounds for worker
 
 	//TODO meat and potatoes here until I refactor
 	wrkr, _ := RepoUpdateWorker(worker) // check this error
