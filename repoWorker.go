@@ -18,7 +18,7 @@ func init() {
 	workerMutex = &sync.Mutex{}
 	workerMutex.Lock()
 	defer workerMutex.Unlock()
-	nextWorkerID = 0
+	nextWorkerID = 1
 }
 
 // RepoFindWorker searches for a worker with id inside mock DB
@@ -26,7 +26,7 @@ func RepoFindWorker(id int) (gostock.Worker, error) {
 	workerMutex.Lock()
 	defer workerMutex.Unlock()
 	if validWorkerID(id) { // currentID? or len(workers), this is jank
-		return workers[id], nil
+		return workers[id+1], nil
 	}
 	w := gostock.NewWorker()
 	w.Valid = false
@@ -51,31 +51,32 @@ func RepoUpdateWorker(worker gostock.Worker) (gostock.Worker, error) {
 	if validWorkerID(worker.ID) {
 		workerMutex.Lock()
 		defer workerMutex.Unlock()
+		index := worker.ID + 1
 
 		//TODO remove this debug loggin
-		log.Printf("setting worker at index %d to have a jobID of %d", worker.ID, worker.JobID)
-		workers[worker.ID].JobID = worker.JobID
-		log.Printf("set worker at index %d to have a jobID of %d", worker.ID, worker.JobID)
-		workers[worker.ID].Ready = worker.Ready
-		workers[worker.ID].Working = worker.Working
+		log.Printf("setting worker at index %d to have a jobID of %d", index, worker.JobID)
+		workers[index].JobID = worker.JobID
+		log.Printf("set worker at index %d to have a jobID of %d", index, worker.JobID)
+		workers[index].Ready = worker.Ready
+		workers[index].Working = worker.Working
 		//workers[i].IPAddr = worker.IPAddr
 		//workers[i].Port = worker.Port
-		workers[worker.ID].LastUpdate = time.Now()
+		workers[index].LastUpdate = time.Now()
 
 		// if this update was to notify a worker was ready, then add to the queue
-		if workers[worker.ID].Ready == true {
+		if workers[index].Ready == true {
 			readyWorkers <- worker.ID
 		}
 
 		// now return the updated info
-		return workers[worker.ID], nil
+		return workers[index], nil
 	}
 	worker.Valid = false
 	return worker, fmt.Errorf("worker ID not found")
 }
 
 func validWorkerID(id int) bool {
-	if id >= 0 && len(workers) != 0 && id < nextWorkerID { // currentID? or len(workers), this is jank
+	if id > 0 && len(workers) != 0 && id < nextWorkerID { // currentID? or len(workers), this is jank
 		return true
 	}
 	return false
