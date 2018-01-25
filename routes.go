@@ -47,7 +47,7 @@ var routes = Routes{
 		JobShow,
 	},
 	Route{
-		"JobShow",
+		"JobUpdateJSON",
 		"POST",
 		"/api/v1/jobs/{jobID}",
 		"",
