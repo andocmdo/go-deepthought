@@ -75,7 +75,7 @@ func RepoUpdateWorker(worker gostock.Worker) (gostock.Worker, error) {
 }
 
 func validWorkerID(id int) bool {
-	if id >= 0 && len(workers) != 0 && id <= nextWorkerID { // currentID? or len(workers), this is jank
+	if id >= 0 && len(workers) != 0 && id < nextWorkerID { // currentID? or len(workers), this is jank
 		return true
 	}
 	return false
