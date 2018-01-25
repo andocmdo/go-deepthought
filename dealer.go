@@ -30,7 +30,7 @@ func dealer(d int, jobChan <-chan int, workerChan <-chan int) {
 		jobID := <-jobChan
 		log.Printf("dealer %d is sending job %d to worker %d", d, jobID, workerID)
 		job, err := RepoFindJob(jobID)
-		log.Printf("dealer %d found job %d : %+v", d, jobID, job)
+		log.Printf("dealer %d found job %d", d, jobID)
 		if err != nil {
 			log.Printf("dealer %d encountered an error finding job %d to send to worker %d", d, jobID, workerID)
 			log.Printf(err.Error())
