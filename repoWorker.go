@@ -26,7 +26,7 @@ func RepoFindWorker(id int) (gostock.Worker, error) {
 	workerMutex.Lock()
 	defer workerMutex.Unlock()
 	if validWorkerID(id) { // currentID? or len(workers), this is jank
-		return workers[id+1], nil
+		return workers[id-1], nil
 	}
 	w := gostock.NewWorker()
 	w.Valid = false
@@ -51,7 +51,7 @@ func RepoUpdateWorker(worker gostock.Worker) (gostock.Worker, error) {
 	if validWorkerID(worker.ID) {
 		workerMutex.Lock()
 		defer workerMutex.Unlock()
-		index := worker.ID + 1
+		index := worker.ID - 1
 
 		//TODO remove this debug loggin
 		log.Printf("setting worker at index %d to have a jobID of %d", index, worker.JobID)
