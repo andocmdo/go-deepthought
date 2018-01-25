@@ -88,7 +88,7 @@ var routes = Routes{
 		WorkerShow,
 	},
 	Route{
-		"WorkerShow",
+		"WorkerUpdateJSON",
 		"POST",
 		"/api/v1/workers/{workerID}",
 		"",
