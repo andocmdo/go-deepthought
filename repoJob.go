@@ -17,7 +17,7 @@ func init() {
 	jobMutex = &sync.Mutex{}
 	jobMutex.Lock()
 	defer jobMutex.Unlock()
-	nextJobID = 0
+	nextJobID = 1
 }
 
 // RepoFindJob searches for a job with id inside mock DB
@@ -47,23 +47,24 @@ func RepoUpdateJob(job gostock.Job) (gostock.Job, error) {
 	if validJobID(job.ID) {
 		jobMutex.Lock()
 		defer jobMutex.Unlock()
+		index := job.ID - 1
 
-		jobs[job.ID].WorkerID = job.WorkerID
-		jobs[job.ID].Dispatched = job.Dispatched
-		jobs[job.ID].Running = job.Running
-		jobs[job.ID].Completed = job.Completed
-		jobs[job.ID].Started = job.Started
-		jobs[job.ID].Ended = job.Ended
-		jobs[job.ID].Result = job.Result
-		jobs[job.ID].LastUpdate = time.Now()
-		return jobs[job.ID], nil
+		jobs[index].WorkerID = job.WorkerID
+		jobs[index].Dispatched = job.Dispatched
+		jobs[index].Running = job.Running
+		jobs[index].Completed = job.Completed
+		jobs[index].Started = job.Started
+		jobs[index].Ended = job.Ended
+		jobs[index].Result = job.Result
+		jobs[index].LastUpdate = time.Now()
+		return jobs[index], nil
 	}
 	job.Valid = false
 	return job, fmt.Errorf("job ID not found")
 }
 
 func validJobID(id int) bool {
-	if id >= 0 && len(jobs) != 0 && id < nextJobID { // nextJobID? or len(jobs), this is jank
+	if id > 0 && len(jobs) != 0 && id < nextJobID { // nextJobID? or len(jobs), this is jank
 		return true
 	}
 	return false
