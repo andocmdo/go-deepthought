@@ -175,7 +175,14 @@ func WorkerUpdateJSON(w http.ResponseWriter, r *http.Request) {
 	// TODO remove this debug stuff after fixing bug for index out of bounds for worker
 
 	//TODO meat and potatoes here until I refactor
-	wrkr, _ := RepoUpdateWorker(worker) // check this error
+	wrkr, err := RepoUpdateWorker(worker) // check this error
+	if err != nil || workerID != worker.ID {
+		w.Header().Set("Content-Type", "text/plain")
+		w.WriteHeader(http.StatusBadRequest)
+		log.Printf(err.Error())
+		fmt.Fprintln(w, err.Error())
+		return
+	}
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)
 	if err := json.NewEncoder(w).Encode(wrkr); err != nil {
