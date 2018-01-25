@@ -9,7 +9,7 @@ import (
 	gostock "github.com/andocmdo/gostockd/common"
 )
 
-var currentWorkerID int
+var nextWorkerID int
 var workers gostock.Workers
 var workerMutex *sync.Mutex
 
@@ -18,7 +18,7 @@ func init() {
 	workerMutex = &sync.Mutex{}
 	workerMutex.Lock()
 	defer workerMutex.Unlock()
-	currentWorkerID = 0
+	nextWorkerID = 0
 }
 
 // RepoFindWorker searches for a worker with id inside mock DB
@@ -35,12 +35,12 @@ func RepoFindWorker(id int) (gostock.Worker, error) {
 
 // RepoCreateWorker takes a worker and assigns it the next ID, then adds to workers slice
 func RepoCreateWorker(w gostock.Worker) gostock.Worker {
-	w.ID = currentWorkerID
+	w.ID = nextWorkerID
 	//log.Print("RepoCreateWorker", w)
 	workerMutex.Lock()
 	defer workerMutex.Unlock()
 	workers = append(workers, w)
-	currentWorkerID++
+	nextWorkerID++
 	return w
 }
 
@@ -75,7 +75,7 @@ func RepoUpdateWorker(worker gostock.Worker) (gostock.Worker, error) {
 }
 
 func validWorkerID(id int) bool {
-	if id >= 0 && len(workers) != 0 && id <= currentWorkerID { // currentID? or len(workers), this is jank
+	if id >= 0 && len(workers) != 0 && id <= nextWorkerID { // currentID? or len(workers), this is jank
 		return true
 	}
 	return false
