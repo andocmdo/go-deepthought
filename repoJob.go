@@ -8,7 +8,7 @@ import (
 	"github.com/andocmdo/gostockd/common"
 )
 
-var currentJobID int
+var nextJobID int
 var jobs gostock.Jobs
 var jobMutex *sync.Mutex
 
@@ -17,7 +17,7 @@ func init() {
 	jobMutex = &sync.Mutex{}
 	jobMutex.Lock()
 	defer jobMutex.Unlock()
-	currentJobID = 0
+	nextJobID = 0
 }
 
 // RepoFindJob searches for a job with id inside mock DB
@@ -32,12 +32,12 @@ func RepoFindJob(id int) (gostock.Job, error) {
 
 // RepoCreateJob takes a job and assigns it the next ID, then adds to jobs slice
 func RepoCreateJob(j gostock.Job) gostock.Job {
-	j.ID = currentJobID
+	j.ID = nextJobID
 	jobMutex.Lock()
 	defer jobMutex.Unlock()
 	jobs = append(jobs, j)
 	jobsToRun <- j.ID
-	currentJobID++
+	nextJobID++
 	return j
 }
 
@@ -63,7 +63,7 @@ func RepoUpdateJob(job gostock.Job) (gostock.Job, error) {
 }
 
 func validJobID(id int) bool {
-	if id >= 0 && len(jobs) != 0 && id <= currentJobID { // currentJobID? or len(jobs), this is jank
+	if id >= 0 && len(jobs) != 0 && id <= nextJobID { // nextJobID? or len(jobs), this is jank
 		return true
 	}
 	return false
