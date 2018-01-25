@@ -25,7 +25,7 @@ func RepoFindJob(id int) (gostock.Job, error) {
 	jobMutex.Lock()
 	defer jobMutex.Unlock()
 	if validJobID(id) {
-		return jobs[id+1], nil
+		return jobs[id-1], nil
 	}
 	return gostock.Job{}, fmt.Errorf("can find job: %d", id)
 }
