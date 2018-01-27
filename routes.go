@@ -47,7 +47,7 @@ var routes = Routes{
 		JobShow,
 	},
 	Route{
-		"JobShow",
+		"JobUpdateJSON",
 		"POST",
 		"/api/v1/jobs/{jobID}",
 		"",
@@ -88,7 +88,7 @@ var routes = Routes{
 		WorkerShow,
 	},
 	Route{
-		"WorkerShow",
+		"WorkerUpdateJSON",
 		"POST",
 		"/api/v1/workers/{workerID}",
 		"",

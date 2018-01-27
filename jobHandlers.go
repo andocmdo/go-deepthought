@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"time"
 
+	gostock "github.com/andocmdo/gostockd/common"
 	"github.com/gorilla/mux"
 )
 
@@ -56,7 +57,7 @@ func JobShow(w http.ResponseWriter, r *http.Request) {
 
 // JobCreateJSON creates a job from JSON POST data to /jobs endpoint
 func JobCreateJSON(w http.ResponseWriter, r *http.Request) {
-	var job Job
+	var job gostock.Job
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, uploadLimit))
 	if err != nil {
 		w.Header().Set("Content-Type", "text/plain")
@@ -95,7 +96,7 @@ func JobCreateJSON(w http.ResponseWriter, r *http.Request) {
 // JobCreateURLEnc creates a job from JSON POST data to /jobs endpoint
 func JobCreateURLEnc(w http.ResponseWriter, r *http.Request) {
 	//job := Job{}
-	job := NewJob()
+	job := gostock.NewJob()
 
 	if err := r.ParseForm(); err != nil {
 		w.Header().Set("Content-Type", "text/plain")
@@ -130,7 +131,7 @@ func JobCreateURLEnc(w http.ResponseWriter, r *http.Request) {
 
 // JobUpdateJSON updates a job from JSON POST data to /jobs endpoint
 func JobUpdateJSON(w http.ResponseWriter, r *http.Request) {
-	var job Job
+	var job gostock.Job
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, uploadLimit))
 	if err != nil {
 		w.Header().Set("Content-Type", "text/plain")
@@ -154,18 +155,16 @@ func JobUpdateJSON(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// No matter what ID is sent in the JSON, we are going to only update what url
-	// was requested
+	// We make sure the JSON and request URL match
 	vars := mux.Vars(r)
 	jobID, err := strconv.Atoi(vars["jobID"])
-	if err != nil {
+	if err != nil || jobID != job.ID {
 		w.Header().Set("Content-Type", "text/plain")
 		w.WriteHeader(http.StatusBadRequest)
 		log.Printf(err.Error())
 		fmt.Fprintln(w, err.Error())
 		return
 	}
-	job.ID = jobID
 
 	// TODO Meat and Potatoes here, until I refactor this mess....
 	j, _ := RepoUpdateJob(job) // check this error

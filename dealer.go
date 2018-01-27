@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
+	"net"
 )
 
 const jobQueueSize = 10000
@@ -13,7 +15,6 @@ var readyWorkers chan int
 func init() {
 	jobsToRun = make(chan int, jobQueueSize)
 	readyWorkers = make(chan int, workerQueueSize)
-
 	log.Println("Job queue size: ", jobQueueSize)
 	log.Println("Worker queue size: ", workerQueueSize)
 
@@ -23,37 +24,61 @@ func init() {
 // Dealer depyloys jobs to waiting workers
 func dealer(d int, jobChan <-chan int, workerChan <-chan int) {
 	log.Printf("started dealer %d", d)
+
 	for {
 		workerID := <-workerChan
 		jobID := <-jobChan
 		log.Printf("dealer %d is sending job %d to worker %d", d, jobID, workerID)
 		job, err := RepoFindJob(jobID)
+		log.Printf("dealer %d found job %d", d, jobID)
 		if err != nil {
 			log.Printf("dealer %d encountered an error finding job %d to send to worker %d", d, jobID, workerID)
 			log.Printf(err.Error())
 		}
-
-		/* TODO these are update by the worker itself through api
-		job.Running = true
-		job.Started = time.Now()
-		_, err = RepoUpdateJob(job)
+		wrkr, err := RepoFindWorker(workerID)
 		if err != nil {
-			log.Printf("error on job %d", jobID)
+			log.Printf("dealer %d encountered an error finding worker %d", d, workerID)
 			log.Printf(err.Error())
 		}
-		*/
 
 		// This is where we send out job
 		// connect to tcp port and send job data
+		conn, err := net.Dial("tcp", wrkr.IPAddr+":"+wrkr.Port)
+
+		if err != nil {
+			log.Printf("dealer %d encountered an error connecting to worker %d", d, workerID)
+			log.Printf(err.Error())
+		}
+
+		// using JSON now instead of gob, keeping this for notes. Remove before committing Andy
+		enc := json.NewEncoder(conn) // Will write to network.
+		dec := json.NewDecoder(conn) // Will read from network.
+
+		// set the workerID and jobID for both worker and job
+		wrkr.JobID = jobID
+		job.WorkerID = workerID
+
+		// now send the JSON job to a worker
+		err = enc.Encode(job)
+		if err != nil {
+			log.Fatal("encode error:", err)
+		}
 		log.Printf("Dealer %d sent job %d to worker %d ", d, jobID, workerID)
+
+		err = dec.Decode(&job)
+		if err != nil {
+			// TODO check if job is valid, if not there was some other error, and we
+			// should reschedule the job here
+			log.Fatal("decode error 1: ", err)
+		}
+
+		log.Printf("Dealer %d got confirmation from worker %d ", d, workerID)
+		//log.Printf("%+v", job)
 
 		// And when finished, note the time, check for errors, etc
 		job.Dispatched = true
-		/* TODO These will be updated by the API
-		job.Running = false
-		job.Completed = true
-		job.Result = string(out)
-		*/
+		job.WorkerID = job.ID
+		//worker.JobID //TODO update the worker with the jobID it is running.
 		_, err = RepoUpdateJob(job)
 		if err != nil {
 			log.Printf("error dispatching job %d", jobID)
@@ -61,6 +86,7 @@ func dealer(d int, jobChan <-chan int, workerChan <-chan int) {
 			return
 		}
 		log.Printf("dealer %d successfully dispatched job %d to worker %d", d, jobID, workerID)
+		conn.Close()
 
 	}
 }

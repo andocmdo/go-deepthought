@@ -8,8 +8,10 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
+	gostock "github.com/andocmdo/gostockd/common"
 	"github.com/gorilla/mux"
 )
 
@@ -56,7 +58,7 @@ func WorkerShow(w http.ResponseWriter, r *http.Request) {
 
 // WorkerCreateJSON creates a worker from JSON POST data to /workers endpoint
 func WorkerCreateJSON(w http.ResponseWriter, r *http.Request) {
-	var worker Worker
+	var worker gostock.Worker
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, uploadLimit))
 	if err != nil {
 		w.Header().Set("Content-Type", "text/plain")
@@ -89,7 +91,8 @@ func WorkerCreateJSON(w http.ResponseWriter, r *http.Request) {
 
 	worker.Created = time.Now()
 	worker.Valid = true
-	worker.IPAddr = r.RemoteAddr
+	ipAndPort := r.RemoteAddr
+	worker.IPAddr = strings.Split(ipAndPort, ":")[0]
 	wrkr := RepoCreateWorker(worker)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)
@@ -102,7 +105,7 @@ func WorkerCreateJSON(w http.ResponseWriter, r *http.Request) {
 // WorkerCreateURLEnc creates a worker from JSON POST data to /workers endpoint
 func WorkerCreateURLEnc(w http.ResponseWriter, r *http.Request) {
 	//worker := Worker{}
-	worker := NewWorker()
+	worker := gostock.NewWorker()
 
 	if err := r.ParseForm(); err != nil {
 		w.Header().Set("Content-Type", "text/plain")
@@ -134,7 +137,7 @@ func WorkerCreateURLEnc(w http.ResponseWriter, r *http.Request) {
 
 // WorkerUpdateJSON creates a worker from JSON POST data to /workers endpoint
 func WorkerUpdateJSON(w http.ResponseWriter, r *http.Request) {
-	var worker Worker
+	var worker gostock.Worker
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, uploadLimit))
 	if err != nil {
 		w.Header().Set("Content-Type", "text/plain")
@@ -158,21 +161,28 @@ func WorkerUpdateJSON(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// No matter what ID is sent in the JSON, we are going to only update what url
-	// was requested
+	// Worker ID and URL should match
 	vars := mux.Vars(r)
 	workerID, err := strconv.Atoi(vars["workerID"])
-	if err != nil {
+	if err != nil || workerID != worker.ID {
 		w.Header().Set("Content-Type", "text/plain")
 		w.WriteHeader(http.StatusBadRequest)
 		log.Printf(err.Error())
 		fmt.Fprintln(w, err.Error())
 		return
 	}
-	worker.ID = workerID
+
+	// TODO remove this debug stuff after fixing bug for index out of bounds for worker
 
 	//TODO meat and potatoes here until I refactor
-	wrkr, _ := RepoUpdateWorker(worker) // check this error
+	wrkr, err := RepoUpdateWorker(worker) // check this error
+	if err != nil || workerID != worker.ID {
+		w.Header().Set("Content-Type", "text/plain")
+		w.WriteHeader(http.StatusBadRequest)
+		log.Printf(err.Error())
+		fmt.Fprintln(w, err.Error())
+		return
+	}
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)
 	if err := json.NewEncoder(w).Encode(wrkr); err != nil {
