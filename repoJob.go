@@ -56,7 +56,7 @@ func RepoUpdateJob(job gostock.Job) (gostock.Job, error) {
 		jobs[index].Started = job.Started
 		jobs[index].Ended = job.Ended
 		jobs[index].Result = job.Result
-		jobs[index].ExitStatus = job.ExitStatus
+		jobs[index].Success = job.Success
 		jobs[index].LastUpdate = time.Now()
 		return jobs[index], nil
 	}

@@ -15,7 +15,7 @@ type Job struct {
 	Ended      time.Time         `json:"ended"`   // updateable
 	Args       map[string]string `json:"args"`
 	Result     string            `json:"result"`     // updateable
-	ExitStatus int               `json:"exitStatus"` //updateable
+	Success    bool              `json:"success"`    //updateable
 	LastUpdate time.Time         `json:"lastUpdate"` // updateable
 }
 
