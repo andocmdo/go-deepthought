@@ -44,7 +44,6 @@ func dealer(d int, jobChan <-chan int, workerChan <-chan int) {
 		// This is where we send out job
 		// connect to tcp port and send job data
 		conn, err := net.Dial("tcp", wrkr.IPAddr+":"+wrkr.Port)
-
 		if err != nil {
 			log.Printf("dealer %d encountered an error connecting to worker %d", d, workerID)
 			log.Printf(err.Error())
