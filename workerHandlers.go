@@ -93,6 +93,7 @@ func WorkerCreateJSON(w http.ResponseWriter, r *http.Request) {
 	worker.Valid = true
 	ipAndPort := r.RemoteAddr
 	worker.IPAddr = strings.Split(ipAndPort, ":")[0]
+	log.Printf("worker remote address: %s", ipAndPort)
 	wrkr := RepoCreateWorker(worker)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)
