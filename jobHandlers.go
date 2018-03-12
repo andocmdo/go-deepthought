@@ -15,6 +15,7 @@ import (
 )
 
 // JobIndex gets all jobs as JSON
+// TODO maybe here is where we implement the filtering for running, cancelled, failed, etc jobs
 func JobIndex(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
