@@ -26,9 +26,11 @@ func dealer(d int, jobChan <-chan int, workerChan <-chan int) {
 	log.Printf("started dealer %d", d)
 
 	for {
+		// TODO add another loop here that checks both valid and cancelled fields for jobs, and ready field for workers
+		// skip jobs where valid=false, cancelled=false, and skip workers who are ready=false
 		workerID := <-workerChan
 		jobID := <-jobChan
-		log.Printf("dealer %d is sending job %d to worker %d", d, jobID, workerID)
+		log.Printf("dealer %d is starting to sending job %d to worker %d", d, jobID, workerID)
 		job, err := RepoFindJob(jobID)
 		log.Printf("dealer %d found job %d", d, jobID)
 		if err != nil {
