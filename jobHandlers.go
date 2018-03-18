@@ -31,29 +31,50 @@ func JobIndex(w http.ResponseWriter, r *http.Request) {
 // JobShow attemps to get a specific job based on ID
 func JobShow(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	jobID, err := strconv.Atoi(vars["jobID"])
-	if err != nil {
-		w.Header().Set("Content-Type", "text/plain")
-		w.WriteHeader(http.StatusBadRequest)
-		log.Printf(err.Error())
-		fmt.Fprintln(w, err.Error())
-		return
-	}
-	job, err := RepoFindJob(jobID)
-	if err != nil {
-		w.Header().Set("Content-Type", "text/plain")
-		w.WriteHeader(http.StatusNotFound)
-		log.Printf(err.Error())
-		fmt.Fprintln(w, err.Error())
-		return
-	}
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(job); err != nil {
-		w.Header().Set("Content-Type", "text/plain")
-		w.WriteHeader(http.StatusInternalServerError)
-		log.Printf(err.Error())
-		fmt.Fprintln(w, err.Error())
+
+	// check for filters
+	if vars["jobID"] == "running" {
+		var running Jobs
+		for i := 0; i < len(jobs); i++ {
+			if jobs[i].Running {
+				running = append(running, jobs[i])
+			}
+		}
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusOK)
+		if err := json.NewEncoder(w).Encode(running); err != nil {
+			w.Header().Set("Content-Type", "text/plain")
+			w.WriteHeader(http.StatusInternalServerError)
+			log.Printf(err.Error())
+			fmt.Fprintln(w, err.Error())
+		}
+
+	} else {
+		// use the url vars as jobid
+		jobID, err := strconv.Atoi(vars["jobID"])
+		if err != nil {
+			w.Header().Set("Content-Type", "text/plain")
+			w.WriteHeader(http.StatusBadRequest)
+			log.Printf(err.Error())
+			fmt.Fprintln(w, err.Error())
+			return
+		}
+		job, err := RepoFindJob(jobID)
+		if err != nil {
+			w.Header().Set("Content-Type", "text/plain")
+			w.WriteHeader(http.StatusNotFound)
+			log.Printf(err.Error())
+			fmt.Fprintln(w, err.Error())
+			return
+		}
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusOK)
+		if err := json.NewEncoder(w).Encode(job); err != nil {
+			w.Header().Set("Content-Type", "text/plain")
+			w.WriteHeader(http.StatusInternalServerError)
+			log.Printf(err.Error())
+			fmt.Fprintln(w, err.Error())
+		}
 	}
 }
 
