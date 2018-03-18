@@ -97,7 +97,7 @@ func JobShow(w http.ResponseWriter, r *http.Request) {
 					answer = append(answer, jobs[i])
 				}
 			}
-		} else if vars["jobID"] == "notSuccessful" {
+		} else if vars["jobID"] == "notSuccessful" || vars["jobID"] == "failed" {
 			for i := 0; i < len(jobs); i++ {
 				if !jobs[i].Success {
 					answer = append(answer, jobs[i])
