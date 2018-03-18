@@ -30,7 +30,13 @@ func JobIndex(w http.ResponseWriter, r *http.Request) {
 
 // JobShow attemps to get a specific job based on ID
 func JobShow(w http.ResponseWriter, r *http.Request) {
+	// this is the variables passed in URL
 	vars := mux.Vars(r)
+
+	// this will be the encoded list of jobs, based on filter,
+	// (or no filter / all jobs)
+	// defaults to all jobs
+	answer := &jobs
 
 	// check for filters
 	if vars["jobID"] == "running" {
@@ -40,9 +46,11 @@ func JobShow(w http.ResponseWriter, r *http.Request) {
 				running = append(running, jobs[i])
 			}
 		}
+		answer = &running
+
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
-		if err := json.NewEncoder(w).Encode(running); err != nil {
+		if err := json.NewEncoder(w).Encode(*answer); err != nil {
 			w.Header().Set("Content-Type", "text/plain")
 			w.WriteHeader(http.StatusInternalServerError)
 			log.Printf(err.Error())
@@ -67,6 +75,7 @@ func JobShow(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintln(w, err.Error())
 			return
 		}
+
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
 		if err := json.NewEncoder(w).Encode(job); err != nil {
