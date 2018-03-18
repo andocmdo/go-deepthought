@@ -68,7 +68,6 @@ func JobShow(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		} else if vars["jobID"] == "successful" {
-			var answer Jobs
 			for i := 0; i < len(jobs); i++ {
 				if jobs[i].Success {
 					answer = append(answer, jobs[i])
