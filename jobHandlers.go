@@ -97,13 +97,18 @@ func JobShow(w http.ResponseWriter, r *http.Request) {
 					answer = append(answer, jobs[i])
 				}
 			}
-		} else if vars["jobID"] == "notSuccessful" || vars["jobID"] == "failed" {
+		} else if vars["jobID"] == "notSuccessful" {
 			for i := 0; i < len(jobs); i++ {
 				if !jobs[i].Success {
 					answer = append(answer, jobs[i])
 				}
 			}
-		} else {
+		} else if vars["jobID"] == "failed" {
+			for i := 0; i < len(jobs); i++ {
+				if jobs[i].Completed && !jobs[i].Success {
+					answer = append(answer, jobs[i])
+				}
+			} else {
 			// final fall through case.
 			// not number, not any of above
 			w.Header().Set("Content-Type", "text/plain")
