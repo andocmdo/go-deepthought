@@ -12,7 +12,7 @@ const workerQueueSize = 500
 var jobsToRun chan int
 var readyWorkers chan int
 
-func init() {
+func startDealer() {
 	jobsToRun = make(chan int, jobQueueSize)
 	readyWorkers = make(chan int, workerQueueSize)
 	log.Println("Job queue size: ", jobQueueSize)

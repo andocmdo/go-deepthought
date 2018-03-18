@@ -4,16 +4,14 @@ import (
 	"fmt"
 	"sync"
 	"time"
-
-	"github.com/andocmdo/gostockd/common"
 )
 
 var nextJobID int
-var jobs gostock.Jobs
+var jobs Jobs
 var jobMutex *sync.Mutex
 
 // Give us some seed data
-func init() {
+func setupRepoJob() {
 	jobMutex = &sync.Mutex{}
 	jobMutex.Lock()
 	defer jobMutex.Unlock()
@@ -21,17 +19,17 @@ func init() {
 }
 
 // RepoFindJob searches for a job with id inside mock DB
-func RepoFindJob(id int) (gostock.Job, error) {
+func RepoFindJob(id int) (Job, error) {
 	jobMutex.Lock()
 	defer jobMutex.Unlock()
 	if validJobID(id) {
 		return jobs[id-1], nil
 	}
-	return gostock.Job{}, fmt.Errorf("can find job: %d", id)
+	return Job{}, fmt.Errorf("can find job: %d", id)
 }
 
 // RepoCreateJob takes a job and assigns it the next ID, then adds to jobs slice
-func RepoCreateJob(j gostock.Job) gostock.Job {
+func RepoCreateJob(j Job) Job {
 	j.ID = nextJobID
 	jobMutex.Lock()
 	defer jobMutex.Unlock()
@@ -42,7 +40,7 @@ func RepoCreateJob(j gostock.Job) gostock.Job {
 }
 
 // RepoUpdateJob updates a job that matches input job.ID, only updating updateable fields
-func RepoUpdateJob(job gostock.Job) (gostock.Job, error) {
+func RepoUpdateJob(job Job) (Job, error) {
 	// check sanity first
 	if validJobID(job.ID) {
 		jobMutex.Lock()
