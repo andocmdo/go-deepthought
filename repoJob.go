@@ -11,7 +11,7 @@ var jobs Jobs
 var jobMutex *sync.Mutex
 
 // Give us some seed data
-func init() {
+func setupRepoJob() {
 	jobMutex = &sync.Mutex{}
 	jobMutex.Lock()
 	defer jobMutex.Unlock()

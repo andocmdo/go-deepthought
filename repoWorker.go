@@ -12,7 +12,7 @@ var workers Workers
 var workerMutex *sync.Mutex
 
 // Initialize mutex and fake DB
-func init() {
+func setupRepoWorker() {
 	workerMutex = &sync.Mutex{}
 	workerMutex.Lock()
 	defer workerMutex.Unlock()

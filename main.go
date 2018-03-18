@@ -56,9 +56,16 @@ func main() {
 
 	} else {
 		// if we are not a worker node we are the master
+
 		// TODO add a thread to check the status of workers (ping them essentially) an
 		// set their "ready" status accordingly.
 
+		// had to move the init stuff here
+		startDealer()
+		setupRepoJob()
+		setupRepoWorker()
+
+		// start the webserver
 		router := NewRouter()
 		log.Fatal(http.ListenAndServe(":8080", router))
 
