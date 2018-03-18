@@ -108,7 +108,8 @@ func JobShow(w http.ResponseWriter, r *http.Request) {
 				if jobs[i].Completed && !jobs[i].Success {
 					answer = append(answer, jobs[i])
 				}
-			} else {
+			}
+		} else {
 			// final fall through case.
 			// not number, not any of above
 			w.Header().Set("Content-Type", "text/plain")
