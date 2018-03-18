@@ -36,7 +36,7 @@ func JobShow(w http.ResponseWriter, r *http.Request) {
 	// this will be the encoded list of jobs, based on filter,
 	// (or no filter / all jobs)
 	// defaults to all jobs
-	answer := &jobs
+	var answer *Jobs
 
 	// check for filters
 	if vars["jobID"] == "running" {
