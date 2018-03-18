@@ -5,12 +5,10 @@ import (
 	"log"
 	"sync"
 	"time"
-
-	gostock "github.com/andocmdo/gostockd/common"
 )
 
 var nextWorkerID int
-var workers gostock.Workers
+var workers Workers
 var workerMutex *sync.Mutex
 
 // Initialize mutex and fake DB
@@ -22,19 +20,19 @@ func init() {
 }
 
 // RepoFindWorker searches for a worker with id inside mock DB
-func RepoFindWorker(id int) (gostock.Worker, error) {
+func RepoFindWorker(id int) (Worker, error) {
 	workerMutex.Lock()
 	defer workerMutex.Unlock()
 	if validWorkerID(id) { // currentID? or len(workers), this is jank
 		return workers[id-1], nil
 	}
-	w := gostock.NewWorker()
+	w := NewWorker()
 	w.Valid = false
 	return *w, fmt.Errorf("can find worker: %d", id)
 }
 
 // RepoCreateWorker takes a worker and assigns it the next ID, then adds to workers slice
-func RepoCreateWorker(w gostock.Worker) gostock.Worker {
+func RepoCreateWorker(w Worker) Worker {
 	w.ID = nextWorkerID
 	//log.Print("RepoCreateWorker", w)
 	workerMutex.Lock()
@@ -46,7 +44,7 @@ func RepoCreateWorker(w gostock.Worker) gostock.Worker {
 
 // RepoUpdateWorker updates a worker that matches input worker.ID, only updating updateable fields
 // TODO this is horrific crap with the +1. HAVE TO FIX THIS
-func RepoUpdateWorker(worker gostock.Worker) (gostock.Worker, error) {
+func RepoUpdateWorker(worker Worker) (Worker, error) {
 	// check sanity first
 	if validWorkerID(worker.ID) {
 		workerMutex.Lock()

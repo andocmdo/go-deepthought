@@ -11,7 +11,6 @@ import (
 	"strings"
 	"time"
 
-	gostock "github.com/andocmdo/gostockd/common"
 	"github.com/gorilla/mux"
 )
 
@@ -58,7 +57,7 @@ func WorkerShow(w http.ResponseWriter, r *http.Request) {
 
 // WorkerCreateJSON creates a worker from JSON POST data to /workers endpoint
 func WorkerCreateJSON(w http.ResponseWriter, r *http.Request) {
-	var worker gostock.Worker
+	var worker Worker
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, uploadLimit))
 	if err != nil {
 		w.Header().Set("Content-Type", "text/plain")
@@ -106,7 +105,7 @@ func WorkerCreateJSON(w http.ResponseWriter, r *http.Request) {
 // WorkerCreateURLEnc creates a worker from JSON POST data to /workers endpoint
 func WorkerCreateURLEnc(w http.ResponseWriter, r *http.Request) {
 	//worker := Worker{}
-	worker := gostock.NewWorker()
+	worker := NewWorker()
 
 	if err := r.ParseForm(); err != nil {
 		w.Header().Set("Content-Type", "text/plain")
@@ -138,7 +137,7 @@ func WorkerCreateURLEnc(w http.ResponseWriter, r *http.Request) {
 
 // WorkerUpdateJSON creates a worker from JSON POST data to /workers endpoint
 func WorkerUpdateJSON(w http.ResponseWriter, r *http.Request) {
-	var worker gostock.Worker
+	var worker Worker
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, uploadLimit))
 	if err != nil {
 		w.Header().Set("Content-Type", "text/plain")
