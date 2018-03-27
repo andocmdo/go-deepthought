@@ -18,14 +18,14 @@ type Job struct {
 	Dispatched bool              `json:"dispatched"` // updateable
 	Running    bool              `json:"running"`    // updateable
 	Completed  bool              `json:"completed"`  // updateable
+	Success    bool              `json:"success"`    // updateable
+	Cancel     bool              `json:"cancel"`     // updateable
 	Created    time.Time         `json:"created"`
 	Cancelled  time.Time         `json:"cancelled"` // updateable
 	Started    time.Time         `json:"started"`   // updateable
 	Ended      time.Time         `json:"ended"`     // updateable
 	Args       map[string]string `json:"args"`
 	Result     string            `json:"result"`     // updateable
-	Success    bool              `json:"success"`    // updateable
-	Cancel     bool              `json:"cancel"`     // updateable
 	LastUpdate time.Time         `json:"lastUpdate"` // updateable
 }
 

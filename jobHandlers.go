@@ -30,30 +30,121 @@ func JobIndex(w http.ResponseWriter, r *http.Request) {
 
 // JobShow attemps to get a specific job based on ID
 func JobShow(w http.ResponseWriter, r *http.Request) {
+	// this is the variables passed in URL
 	vars := mux.Vars(r)
+
+	// try to read the URL as a jobID
 	jobID, err := strconv.Atoi(vars["jobID"])
 	if err != nil {
-		w.Header().Set("Content-Type", "text/plain")
-		w.WriteHeader(http.StatusBadRequest)
-		log.Printf(err.Error())
-		fmt.Fprintln(w, err.Error())
-		return
-	}
-	job, err := RepoFindJob(jobID)
-	if err != nil {
-		w.Header().Set("Content-Type", "text/plain")
-		w.WriteHeader(http.StatusNotFound)
-		log.Printf(err.Error())
-		fmt.Fprintln(w, err.Error())
-		return
-	}
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(job); err != nil {
-		w.Header().Set("Content-Type", "text/plain")
-		w.WriteHeader(http.StatusInternalServerError)
-		log.Printf(err.Error())
-		fmt.Fprintln(w, err.Error())
+		// must not be a number...
+
+		// this will be the encoded list of jobs, based on filter,
+		// (or no filter / all jobs) defaults to all jobs
+		var answer Jobs
+
+		// check for filters TODO use cases here?
+		if vars["jobID"] == "running" {
+			for i := 0; i < len(jobs); i++ {
+				if jobs[i].Running {
+					answer = append(answer, jobs[i])
+				}
+			}
+		} else if vars["jobID"] == "dispatched" {
+			for i := 0; i < len(jobs); i++ {
+				if jobs[i].Dispatched {
+					answer = append(answer, jobs[i])
+				}
+			}
+		} else if vars["jobID"] == "completed" {
+			for i := 0; i < len(jobs); i++ {
+				if jobs[i].Completed {
+					answer = append(answer, jobs[i])
+				}
+			}
+		} else if vars["jobID"] == "cancelled" {
+			for i := 0; i < len(jobs); i++ {
+				if jobs[i].Cancel {
+					answer = append(answer, jobs[i])
+				}
+			}
+		} else if vars["jobID"] == "successful" {
+			for i := 0; i < len(jobs); i++ {
+				if jobs[i].Success {
+					answer = append(answer, jobs[i])
+				}
+			}
+		} else if vars["jobID"] == "notRunning" {
+			for i := 0; i < len(jobs); i++ {
+				if !jobs[i].Running {
+					answer = append(answer, jobs[i])
+				}
+			}
+		} else if vars["jobID"] == "notDispatched" {
+			for i := 0; i < len(jobs); i++ {
+				if !jobs[i].Dispatched {
+					answer = append(answer, jobs[i])
+				}
+			}
+		} else if vars["jobID"] == "notCompleted" {
+			for i := 0; i < len(jobs); i++ {
+				if !jobs[i].Completed {
+					answer = append(answer, jobs[i])
+				}
+			}
+		} else if vars["jobID"] == "notCancelled" {
+			for i := 0; i < len(jobs); i++ {
+				if !jobs[i].Cancel {
+					answer = append(answer, jobs[i])
+				}
+			}
+		} else if vars["jobID"] == "notSuccessful" {
+			for i := 0; i < len(jobs); i++ {
+				if !jobs[i].Success {
+					answer = append(answer, jobs[i])
+				}
+			}
+		} else if vars["jobID"] == "failed" {
+			for i := 0; i < len(jobs); i++ {
+				if jobs[i].Completed && !jobs[i].Success {
+					answer = append(answer, jobs[i])
+				}
+			}
+		} else {
+			// final fall through case.
+			// not number, not any of above
+			w.Header().Set("Content-Type", "text/plain")
+			w.WriteHeader(http.StatusBadRequest)
+			log.Printf(err.Error())
+			fmt.Fprintln(w, err.Error())
+			return
+		}
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusOK)
+		if err := json.NewEncoder(w).Encode(answer); err != nil {
+			w.Header().Set("Content-Type", "text/plain")
+			w.WriteHeader(http.StatusInternalServerError)
+			log.Printf(err.Error())
+			fmt.Fprintln(w, err.Error())
+		}
+	} else {
+		// jobID was a number, so go get the job
+		job, err := RepoFindJob(jobID)
+		if err != nil {
+			w.Header().Set("Content-Type", "text/plain")
+			w.WriteHeader(http.StatusNotFound)
+			log.Printf(err.Error())
+			fmt.Fprintln(w, err.Error())
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusOK)
+		if err := json.NewEncoder(w).Encode(job); err != nil {
+			w.Header().Set("Content-Type", "text/plain")
+			w.WriteHeader(http.StatusInternalServerError)
+			log.Printf(err.Error())
+			fmt.Fprintln(w, err.Error())
+		}
 	}
 }
 
