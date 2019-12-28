@@ -199,7 +199,7 @@ func JobCreateURLEnc(w http.ResponseWriter, r *http.Request) {
 		job.Args[key] = values[0] // only using the first occurence of the parameter
 	}
 
-	if (job.Args["symbol"] == "") || (job.Args["startDate"] == "") || (job.Args["endDate"] == "") {
+	if (job.Args["command"] == "")  {
 		w.Header().Set("Content-Type", "text/plain")
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		log.Printf("no symbol in urlencoded form")
