@@ -25,6 +25,41 @@ func JobIndex(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// JobSummary provides running, queued, completed, and failed summary as JSON
+func JobSummary(w http.ResponseWriter, r *http.Request) {
+	answer := make(map[string]int)
+	answer["running"] = 0
+	answer["queued"] = 0
+	answer["completed"] = 0
+	answer["failed"] = 0
+	answer["total"] = 0
+
+	for i := 0; i < len(jobs); i++ {
+		if jobs[i].Running {
+			answer["running"] += 1
+		}
+		if !jobs[i].Dispatched {
+			answer["queued"] += 1
+		}
+		if jobs[i].Completed {
+			answer["completed"] += 1
+		}
+		if jobs[i].Completed && !jobs[i].Success {
+			answer["failed"] += 1
+		}
+	}
+	answer["total"] = len(jobs)
+	
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(answer); err != nil {
+		w.Header().Set("Content-Type", "text/plain")
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Printf(err.Error())
+		fmt.Fprintln(w, err.Error())
+	}
+}
+
 // JobShow attemps to get a specific job based on ID
 func JobShow(w http.ResponseWriter, r *http.Request) {
 	// this is the variables passed in URL
