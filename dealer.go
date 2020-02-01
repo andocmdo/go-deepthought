@@ -6,7 +6,7 @@ import (
 	"net"
 )
 
-const jobQueueSize = 10000
+const jobQueueSize = 100000
 const workerQueueSize = 500
 
 var jobsToRun chan int
