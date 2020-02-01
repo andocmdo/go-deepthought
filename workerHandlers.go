@@ -26,6 +26,36 @@ func WorkerIndex(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// WorkerSummary gets online, working, idle as JSON hash
+func WorkerSummary(w http.ResponseWriter, r *http.Request) {
+	answer := make(map[string]int)
+	answer["online"] = 0
+	answer["working"] = 0
+	answer["idle"] = 0
+	answer["total"] = 0
+
+	for i := 0; i < len(workers); i++ {
+		if workers[i].Working {
+			answer["running"] += 1
+		}
+		if workers[i].Ready {
+			answer["idle"] += 1
+		}
+	}
+	// TODO the online should only be "alive", but we haven't implemented yet...
+	answer["online"] = len(workers)
+	answer["total"] = len(workers)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(answer); err != nil {
+		w.Header().Set("Content-Type", "text/plain")
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Printf(err.Error())
+		fmt.Fprintln(w, err.Error())
+	}
+}
+
 // WorkerShow attemps to get a specific worker based on ID
 func WorkerShow(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
