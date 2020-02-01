@@ -39,6 +39,14 @@ var routes = Routes{
 		JobIndex,
 	},
 	Route{
+		"JobSummary",
+		"GET",
+		"/api/v1/jobs/summary",
+		"",
+		"",
+		JobSummary,
+	},
+	Route{
 		"JobShow",
 		"GET",
 		"/api/v1/jobs/{jobID}",
@@ -78,6 +86,14 @@ var routes = Routes{
 		"",
 		"",
 		WorkerIndex,
+	},
+	Route{
+		"WorkerSummary",
+		"GET",
+		"/api/v1/workers/summary",
+		"",
+		"",
+		WorkerSummary,
 	},
 	Route{
 		"WorkerShow",
